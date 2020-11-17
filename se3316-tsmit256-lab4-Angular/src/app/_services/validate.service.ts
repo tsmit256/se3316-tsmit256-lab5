@@ -28,4 +28,39 @@ export class ValidateService {
       }
     return true;
   }
+
+  //Ensures email has 1 '@' and not longer than 320 char and checks for certain special chars
+  isValidEmail(email: string){
+    if((email.match(/@/g) || []).length != 1){
+      alert("Please only use one '@' charcter in email")  
+      return false;
+    }
+
+    if(email.length > 320 || email.length < 1){
+        alert('Email should be between 1 and 320 characters');
+        return false;
+    }
+
+    if(/[(),;:<> ]/.test(email)){
+      alert("Please remove (),;:<> characters from email");
+      return false;
+    }
+  
+    return true;
+  }
+
+  //Remove special characters from password and make less than 100 characters
+  isValidPassword(pass: string){
+    if(pass.length > 100 || pass.length < 1){
+        alert('Password should be between 1 and 100 characters');
+        return false;
+    }
+    if(/[<>]/.test(pass)){
+        alert('Please remove <> characters from password');
+        return false;
+    }
+    
+    return true;
+  } 
+
 }

@@ -11,15 +11,15 @@ import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   { path: 'subjects', component: SubjectsComponent, canActivate: [AuthGuard]},
-  { path: 'class-names', component: ClassNamesComponent },
-  { path: 'course-codes/:subjectCode', component: CourseCodesComponent},
-  { path: 'course-components/:pair', component: CourseComponentsComponent},
-  { path: 'timetable-results/:subjectCode', component: TimetableResultsComponent},
-  { path: 'timetable-results/:subjectCode/:courseCode', component: TimetableResultsComponent},
-  { path: 'timetable-results/:subjectCode/:courseCode/:courseComponent', component: TimetableResultsComponent},
-  { path: 'schedules', component: SchedulesComponent},
-  { path: ':schedName/timetable-results', component: TimetableResultsComponent},
-  { path: 'save-pair-options/:pair/schedules', component: SchedulesComponent},
+  { path: 'class-names', component: ClassNamesComponent, canActivate: [AuthGuard]},
+  { path: 'course-codes/:subjectCode', component: CourseCodesComponent, canActivate: [AuthGuard]},
+  { path: 'course-components/:pair', component: CourseComponentsComponent, canActivate: [AuthGuard]},
+  { path: 'timetable-results/:subjectCode', component: TimetableResultsComponent, canActivate: [AuthGuard]},
+  { path: 'timetable-results/:subjectCode/:courseCode', component: TimetableResultsComponent, canActivate: [AuthGuard]},
+  { path: 'timetable-results/:subjectCode/:courseCode/:courseComponent', component: TimetableResultsComponent, canActivate: [AuthGuard]},
+  { path: 'schedules', component: SchedulesComponent, canActivate: [AuthGuard]},
+  { path: ':schedName/timetable-results', component: TimetableResultsComponent, canActivate: [AuthGuard]},
+  { path: 'save-pair-options/:pair/schedules', component: SchedulesComponent, canActivate: [AuthGuard]},
   { path: 'login', component: LoginComponent},
   { path: '**', redirectTo: '/subjects'}
 ];

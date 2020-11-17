@@ -1,0 +1,30 @@
+.contentClass {
+    position: relative;
+    left: 0;
+    background-color: #EEE;
+    margin: 1em;
+    padding: 1em;
+    border-radius: 4px;
+}
+.contentClass:hover {
+    color: #607D8B;
+    background-color: #DDD;
+    left: .1em;
+}
+
+.inputLabel{
+    margin: 1em;
+}
+
+button {
+    padding: 5px 10px;
+    text-decoration: none;
+    margin-top: 10px;
+    display: inline-block;
+    background-color: #eee;
+    border-radius: 4px;
+}
+button:hover {
+    color: rgb(79, 38, 131);
+    background-color: #cfd8dc;
+}
