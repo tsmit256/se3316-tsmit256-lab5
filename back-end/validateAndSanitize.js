@@ -7,7 +7,6 @@ function cleanCode(res, dirtyInput){
 
     //Input filtering for potential malicious attacks
     const cleanInput = dirtyInput.replace(/[ `#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, ""); //remove special characters from input
-
     return cleanInput;
 }
 
@@ -19,11 +18,36 @@ function cleanScheduleName(res, dirtyInput){
 
     //Input filtering for potential malicious injection attacks
     const cleanInput = dirtyInput.replace(/[`#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, ""); //remove special characters from input
-
     return cleanInput;
 }
+
+//Ensures email has 1 '@' and not longer than 320 char and strips all special characters
+function cleanEmail(res, dirtyInput){
+    if((dirtyInput.match(/@/g) || []).length != 1){
+        return res.status('400').send('Email should have exactly one "@" character');
+    }
+
+    if(dirtyInput.length > 320 || dirtyInput.length < 1){
+        return res.status('400').send('Email should be between 1 and 320 characters');
+    }
+
+    const cleanInput = dirtyInput.replace(/[(),;:<> ]/g, "");
+    return cleanInput;
+}
+
+//Remove special characters from password and make less than 100 characters
+function cleanPassword(res, dirtyInput){
+    if(dirtyInput.length > 100 || dirtyInput.length < 1){
+        return res.status('400').send('Password should be between 1 and 100 characters');
+    }
+
+    const cleanInput = dirtyInput.replace(/[<>]/g, "");
+    return cleanInput;
+} 
 
 
 exports.cleanCode = cleanCode;
 exports.cleanScheduleName = cleanScheduleName;
+exports.cleanEmail = cleanEmail;
+exports.cleanPassword = cleanPassword;
 

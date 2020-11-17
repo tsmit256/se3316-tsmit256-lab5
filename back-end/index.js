@@ -3,9 +3,11 @@ const parseCourseDataFile = require('./parseCourseDataFile'); //seperate js file
 const validateAndSanitize = require('./validateAndSanitize'); //seperate js file for validating and sanitizing inputs
 const low = require('lowdb'); //use lowdb for database funcitonality
 const FileSync = require('lowdb/adapters/FileSync'); //a component of lowdb for database functionality
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = process.env.PORT || 3000; // 3000 will work for local development, but need process object for aws deployment
+
 
 //lowdb database variables
 const adapter = new FileSync('dbSchedule.json');
@@ -17,7 +19,7 @@ app.use(express.json()); //Middleware to enable parsing of json objects
 app.use((req,res,next) => { //for all routes
     console.log(req.method + " request for " + req.url);
     next(); //keep going
-})
+});
 
 app.use('/api/schedules', (req,res,next) =>{ //for routes including anything to do with schedules
     var test = db.get('schedules').value();
@@ -26,6 +28,16 @@ app.use('/api/schedules', (req,res,next) =>{ //for routes including anything to 
         db.defaults({ schedules: [] }).write(); //Add default schedules array
     }
     
+    next(); //keep going
+});
+
+app.use('/api/users', (req,res,next) => { //for routes anything to do with users
+    var test = db.get('users').value();
+
+    if(!test){ //If the users component of databased doesn't exist, then create default
+        db.defaults({ users: []}).write(); //Add default users array
+    }
+
     next(); //keep going
 });
 
@@ -287,6 +299,60 @@ app.get('/api/scheduleCounts', (req,res) => {
 
     res.send(scheduleCourseCounts);
 });
+
+
+//User Authentication
+app.post('/api/users/authenticate', (req,res) => {
+    const email_dirty = req.body.email;
+    const password_dirty = req.body.password;
+
+    const email_clean = validateAndSanitize.cleanEmail(res, email_dirty);
+    const password_clean = validateAndSanitize.cleanPassword(res, password_dirty);
+
+    const user = db.get('users')
+    .find({email: email_clean});
+
+    //Get the existing password
+    const existingPassword = user
+      .get('password')
+      .value();
+
+    if(!existingPassword){
+        return res.status('404').send('A user account with that email does not exist');
+    }
+
+    if(!(existingPassword == password_clean)){
+        return res.status('401').send('Password incorrect');
+    }
+
+    const userId = user
+      .get('id')
+      .value();
+
+    const firstName = user
+      .get('firstName')
+      .value();
+    
+    const role = user
+      .get('role')
+      .value();
+
+    let payload = {firstName: firstName, role: role};
+
+    const jwtBearerToken = jwt.sign(payload, "" + process.env.ACCESS_TOKEN_SECRET, {
+        algorithm: 'HS256',
+        expiresIn: 60, //process.env.ACCESS_TOKEN_LIFE,
+        subject: userId
+    });
+
+    // set it in the HTTP Response body
+    res.status(200).json({
+        idToken: jwtBearerToken, 
+        expiresIn: 60//process.env.ACCESS_TOKEN_LIFE
+    });    
+
+});
+
 
 
 app.listen(port, () => {
