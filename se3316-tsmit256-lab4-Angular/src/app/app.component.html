@@ -1,0 +1,13 @@
+<h1>{{title}}</h1>
+
+<nav *ngIf="currentUser">
+      <a routerLink="/subjects">Browse All Subjects</a>
+      <a routerLink="/class-names">Browse All Class Names</a>
+      <a routerLink="/schedules">Manage Schedules</a>
+      <a (click)="logout()">Logout</a>
+</nav>
+
+<router-outlet></router-outlet>
+<!-- To be used testing purposes!
+  <app-messages></app-messages> 
+-->

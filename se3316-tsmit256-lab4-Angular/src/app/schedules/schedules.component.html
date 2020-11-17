@@ -1,0 +1,53 @@
+<h2>Create Schedule</h2>
+<div>
+    <label>New schedule name:
+      <input #scheduleName />
+    </label>
+    <!-- (click) passes input value to add() and then clears the input -->
+    <button (click)="add(scheduleName.value); scheduleName.value=''">
+      add
+    </button>
+</div>
+
+
+<h2>Your Schedules</h2>
+<p *ngIf="fromSavePairAction === false && scheduleNamesAndCounts.length">Click a schedule to see options</p>
+<p *ngIf="fromSavePairAction === true && scheduleNamesAndCounts.length">Click a schedule to save {{subjectCode}} {{courseCode}} pair</p>
+<p *ngIf="scheduleNamesAndCounts.length == 0">You have no schedules. Create one above!</p>
+<ul class="schedules">
+  <!--If statement has else statement below-->
+  <ng-container *ngIf="fromSavePairAction === false">
+    <li *ngFor="let schedule of scheduleNamesAndCounts">
+        <div class="scheduleDiv"
+            [class.selected]="schedule === selectedSchedule"
+            (click)="onSelect(schedule)">
+            <span class="badge">~</span>{{schedule.name}}, <i>{{schedule.courseCount}} pair(s) saved</i>
+        </div>
+        
+
+        <div *ngIf="selectedSchedule === schedule" class="optionsForSelectedSched">
+
+            <nav>
+                
+                <a routerLink="/{{schedule.name}}/timetable-results">Load Schedule</a>
+                <p></p>           
+                <a (click)="delete(schedule)">Delete Schedule</a>
+                <p></p>
+                <a (click)="deleteAllSchedules()">Delete All Schedules</a>
+                
+            </nav>
+        
+        </div>
+    </li>
+  </ng-container>
+
+  <!--This is the 'else' of the ngIf statement in the li element above-->
+  <ng-container *ngIf="fromSavePairAction === true">
+    <li *ngFor="let schedule of scheduleNamesAndCounts">
+        <div class="scheduleDiv"
+            (click)="savePairToSched(schedule.name)">
+            <span class="badge">~</span>{{schedule.name}}, <i>{{schedule.courseCount}} pair(s) saved</i>
+        </div>
+    </li>
+  </ng-container>
+</ul>

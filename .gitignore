@@ -102,3 +102,12 @@ dist
 
 # TernJS port file
 .tern-port
+
+#node_modules folder
+node_modules
+
+#Lab3 timetable data (provided, not edited)
+Lab3-timetable-data.json
+
+#lowdb database
+dbSchedule.json

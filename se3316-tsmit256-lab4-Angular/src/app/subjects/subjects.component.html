@@ -1,0 +1,25 @@
+<h2>Available Subjects</h2>
+<p>Click a subject to see search options</p>
+<ul class="subjects">
+  <li *ngFor="let subject of subjects">
+    <div class="subjectDiv"
+        [class.selected]="subject === selectedSubject"
+        (click)="onSelect(subject)">
+        <span class="badge">~</span>{{subject.subjectCode}}
+    </div>
+    
+
+    <div *ngIf="selectedSubject === subject" class="optionsForSelectedSub">
+
+        <nav>
+            
+            <a routerLink="/timetable-results/{{selectedSubject.subjectCode}}">Search timetable entries for {{selectedSubject.subjectCode}}</a>
+            <p></p>
+            <a routerLink="/course-codes/{{selectedSubject.subjectCode}}">Get course codes for {{selectedSubject.subjectCode}}</a>
+            
+        </nav>
+      
+    </div>
+  </li>
+</ul>
+

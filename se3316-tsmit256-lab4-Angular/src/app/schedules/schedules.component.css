@@ -1,0 +1,57 @@
+/* SchedulesComponent's private CSS styles */
+.schedules {
+    margin: 0 0 2em 0;
+    list-style-type: none;
+    padding: 0;
+    display: inline-block;
+  }
+  .schedules .scheduleDiv {
+    cursor: pointer;
+    position: relative;
+    left: 0;
+    background-color: #EEE;
+    margin: .5em;
+    padding: .3em .3em .3em 0em;
+    height: 1.6em;
+    border-radius: 4px;
+  }
+  .schedules .scheduleDiv:hover {
+    color: #607D8B;
+    background-color: #DDD;
+    left: .1em;
+  }
+  .schedules .selected {
+    background-color: #bcc6ca;
+    color: white;
+  }
+  .schedules .selected:hover {
+    background-color: #BBD8DC;
+    color: white;
+  }
+  .schedules .badge {
+    display: inline-block;
+    font-size: small;
+    color: white;
+    padding: 0.8em 0.7em 0 0.7em;
+    background-color:#405061;
+    line-height: 1em;
+    position: relative;
+    left: -1px;
+    top: -4px;
+    height: 1.8em;
+    margin-right: .8em;
+    border-radius: 4px 0 0 4px;
+  }
+  .schedules .optionsForSelectedSched{
+    margin: 1em;
+    padding: 0.25em 0;
+    text-align: center;
+  }
+  .schedules a {
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .schedules a:hover {
+    color:#607D8B;
+  }

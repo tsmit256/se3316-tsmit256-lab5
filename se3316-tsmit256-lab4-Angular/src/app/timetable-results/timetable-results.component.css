@@ -1,0 +1,54 @@
+.timeTableResultsUL{
+    list-style-type: none;
+}
+
+.timeTableResultLi{
+    position: relative;
+    cursor: pointer;
+    background-color: #EEE;
+    margin: 1em;
+    padding: 1em;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.timeTableResultLi:hover {
+    color: #607D8B;
+    background-color: #DDD;
+    left: .1em;
+  }
+
+.resultDetail{
+    padding: 3px;
+    margin: 3px;
+    text-align: left;
+}
+
+.resultDetail .courseTitle{
+    font-weight: bold;
+}
+
+.resultDetail .catalog_description{
+    font-style: italic;
+}
+
+.tableResult{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.tableResult td, #tableResult th{
+    border: 1px solid black;
+}
+
+.tableResult td{
+    padding: 5px;
+    background-color: rgb(216, 216, 216);
+}
+
+.tableResult th{
+    text-align: left;
+    background-color: gray;
+    color: white;
+    padding: 10px;
+}

@@ -1,0 +1,9 @@
+<h2>{{subjectCode}} {{courseCode}}'s Components</h2>
+<p>Click a component to search timetable!</p>
+<ul class="courseComponents">
+  <li *ngFor="let courseComponent of courseComponents">
+        <a routerLink="/timetable-results/{{subjectCode}}/{{courseCode}}/{{courseComponent.ssr_component}}">
+            <span class="badge">~</span>{{courseComponent.ssr_component}}
+        </a>    
+  </li>
+</ul>

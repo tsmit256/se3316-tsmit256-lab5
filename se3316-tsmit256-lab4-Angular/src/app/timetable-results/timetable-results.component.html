@@ -1,0 +1,43 @@
+<h2>Timetable Results</h2>
+
+<p *ngIf="courses.length == 0">There are no timetable results!</p>
+<ul class="timeTableResultsUL">
+  <li *ngFor="let course of courses" class="timeTableResultLi">
+    <div class="resultDetail">
+        <p class="courseTitle">{{course.subjectCode}} {{course.catalog_nbr}} {{course.className}}</p>
+        <p class="catalog_description">{{course.catalog_description}}</p>
+    </div>
+
+    <table class="tableResult">
+        <tr>
+            <th>Class Nbr</th>
+            <th>Start Time</th>
+            <th>Descr-Long</th>
+            <th>End Time</th>
+            <th>Campus</th>
+            <th>Facility_ID</th>
+            <th>Days</th>
+            <th>Instructors</th>
+            <th>Class Section</th>
+            <th>Component</th>
+            <th>Enroll-Status</th>
+            <th>Requisites and Constraints</th>
+        </tr>
+
+        <tr *ngFor="let comp of course.course_info">
+            <td>{{comp.class_nbr}}</td>
+            <td>{{comp.start_time}}</td>
+            <td>{{comp.descrlong}}</td>
+            <td>{{comp.end_time}}</td>
+            <td>{{comp.campus}}</td>
+            <td>{{comp.facility_ID}}</td>
+            <td>{{comp.days}}</td>
+            <td>{{comp.instructors}}</td>
+            <td>{{comp.class_section}}</td>
+            <td>{{comp.ssr_component}}</td>
+            <td>{{comp.enrl_stat}}</td>
+            <td>{{comp.descr}}</td>
+        </tr>
+    </table>
+  </li>
+</ul>

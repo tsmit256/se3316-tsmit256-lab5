@@ -1,0 +1,25 @@
+<h2>{{subjectCode}}'s Course Codes</h2>
+<p>Click a course code to see search options</p>
+<ul class="courseCodes">
+  <li *ngFor="let courseCode of courseCodes">
+    <div class="courseCodeDiv"
+        [class.selected]="courseCode === selectedCourseCode"
+        (click)="onSelect(courseCode)">
+        <span class="badge">~</span>{{courseCode.catalog_nbr}}
+    </div>
+    
+
+    <div *ngIf="selectedCourseCode === courseCode" class="optionsForSelectedCode">
+
+        <nav>
+             
+            <a routerLink="/timetable-results/{{subjectCode}}/{{selectedCourseCode.catalog_nbr}}">Search timetable entries for {{subjectCode}} {{selectedCourseCode.catalog_nbr}}</a>
+            <p></p>           
+            <a routerLink="/course-components/{{subjectCode}}__{{selectedCourseCode.catalog_nbr}}">Get course components for {{subjectCode}} {{selectedCourseCode.catalog_nbr}}</a>
+            <p></p>
+            <a routerLink="/save-pair-options/{{subjectCode}}__{{selectedCourseCode.catalog_nbr}}/schedules">Save {{subjectCode}} {{selectedCourseCode.catalog_nbr}} pair to a schedule</a>
+        </nav>
+      
+    </div>
+  </li>
+</ul>
