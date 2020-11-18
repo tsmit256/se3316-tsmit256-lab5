@@ -43,7 +43,7 @@
                     <label class="inputLabel" for="name">Name</label>
                     <input type="text" formControlName="name" class="form-control" [ngClass]="{ 'is-invalid': regSubmitted && rf.name.errors }" />
                     <div *ngIf="regSubmitted && rf.name.errors" class="invalid-feedback">
-                        <div *ngIf="rf.password.errors.required">Password is required</div>
+                        <div *ngIf="rf.name.errors.required">Email is required</div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -65,7 +65,14 @@
                     Login
                 </button>
                 <div *ngIf="registerError" class="alert alert-danger mt-3 mb-0">{{registerError}}</div>
+
+                <div *ngIf="verifyLink">Please visit the following link to confirm account: 
+                    <a href="http://{{verifyLink}}">click here</a>
+
+                </div>
             </form>
+
+            
         </div>
     </div>
 </div>

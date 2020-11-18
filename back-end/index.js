@@ -31,11 +31,16 @@ app.use('/api/schedules', (req,res,next) =>{ //for routes including anything to 
     next(); //keep going
 });
 
-app.use('/api/users', (req,res,next) => { //for routes anything to do with users
+app.use('/api/open/users', (req,res,next) => { //for routes anything to do with users
     var test = db.get('users').value();
+    var test2 = db.get('usersToConfirm').value();
 
-    if(!test){ //If the users component of databased doesn't exist, then create default
+    if(!test){ //If the users component of database doesn't exist, then create default
         db.defaults({ users: []}).write(); //Add default users array
+    }
+
+    if(!test2){ //If the usersToConfirm component doesn't exist, then create default
+        db.defaults({ usersToConfirm: []}).write(); //Add default usersToConfirm array
     }
 
     next(); //keep going
@@ -302,7 +307,7 @@ app.get('/api/scheduleCounts', (req,res) => {
 
 
 //User Authentication
-app.post('/api/users/authenticate', (req,res) => {
+app.post('/api/open/users/authenticate', (req,res) => {
     const email_dirty = req.body.email;
     const password_dirty = req.body.password;
 
@@ -342,7 +347,7 @@ app.post('/api/users/authenticate', (req,res) => {
     const jwtBearerToken = jwt.sign(payload, "" + process.env.ACCESS_TOKEN_SECRET, {
         algorithm: 'HS256',
         expiresIn: 60, //process.env.ACCESS_TOKEN_LIFE,
-        subject: userId
+        subject: toString(userId)
     });
 
     // set it in the HTTP Response body
@@ -354,9 +359,87 @@ app.post('/api/users/authenticate', (req,res) => {
 });
 
 
+app.post('/api/open/users/newAccount', (req, res) => {
+    const name_dirty = req.body.name;
+    const email_dirty = req.body.email;
+    const password_dirty = req.body.password;
+
+    const name_clean = validateAndSanitize.cleanName(res, name_dirty);
+    const email_clean = validateAndSanitize.cleanEmail(res, email_dirty);
+    const password_clean = validateAndSanitize.cleanPassword(res, password_dirty);
+
+    //see if an account with that email already exsits
+    const existingUsers = db.get('users')
+    .value();
+
+    for(var i in existingUsers){
+        if(existingUsers[i].email == email_clean)
+            return res.status('404').send('An account with that email already exists');
+    }
+
+    verificationLink = generateRanVerifLink(100);
+   
+    const newUser = {
+        name: name_clean,
+        email: email_clean,
+        password: password_clean,
+        role: "regular",
+        link: verificationLink
+    };
+
+    //The usersToConfirm database component stores information about users that are yet to be authorized
+    db.get('usersToConfirm')
+    .push(newUser)
+    .write();
+
+    res.send(newUser);
+});
+
+
+//This is used to verify the creation of a new account
+app.post('/api/open/users/verification', (req, res) => {
+    const dirty_link = req.body.link;
+    const clean_link = validateAndSanitize.cleanLink(res, dirty_link);
+
+    var newUser = db.get('usersToConfirm')
+    .find({link: clean_link})
+    .value();
+    
+    if(!newUser)
+        return res.status('404').send('There is no new user account related to this link');
+
+    //remove the user from the usersToConfirm database component
+    db.get('usersToConfirm')
+    .remove({link: clean_link})
+    .write();
+
+    delete newUser.link; //we no longer need to attach a link to the user
+
+    currentLength = db.get('users').value().length;
+    newUser.id = currentLength; //asign an id to the user
+
+    //transfer the user to the users database component
+    db.get('users')
+    .push(newUser)
+    .write();
+
+    res.send(newUser);
+});
+
+
 
 app.listen(port, () => {
     console.log('Listening on port ' + port)
 }); //start server
 
 
+
+function generateRanVerifLink(linkLength) {
+    var link = '';
+    var chs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = chs.length;
+    for ( var i = 0; i < linkLength; i++ ) {
+       link += chs.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return link;
+ }

@@ -15,6 +15,7 @@ import { LoginComponent } from './login/login.component';
 import { JwtInterceptor } from './_helpers/jwt.interceptor';
 import { ErrorInterceptor } from './_helpers/error.interceptor';
 import { ReactiveFormsModule } from '@angular/forms';
+import { AccntVerificationComponent } from './accnt-verification/accnt-verification.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     TimetableResultsComponent,
     SchedulesComponent,
     LoginComponent,
+    AccntVerificationComponent,
   ],
   imports: [
     BrowserModule,

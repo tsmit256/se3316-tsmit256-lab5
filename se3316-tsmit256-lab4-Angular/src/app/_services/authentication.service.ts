@@ -24,7 +24,7 @@ export class AuthenticationService {
         if(!this.validateService.isValidEmail(email) || !this.validateService.isValidPassword(password)){
           return;
         }
-        return this.http.post<any>(`api/users/authenticate`, { email, password })
+        return this.http.post<any>(`api/open/users/authenticate`, { email, password })
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('currentUser', JSON.stringify(user));
@@ -40,9 +40,18 @@ export class AuthenticationService {
     }
 
     createUserAccnt(name: string, email: string, password: string){
-        if(!this.validateService.isValidEmail(email) || !this.validateService.isValidPassword(password)){
+        if(!this.validateService.isValidEmail(email) || 
+          !this.validateService.isValidPassword(password) ||
+          !this.validateService.isValidName(name)){
           return;
         }
-        return this.http.post<any>(`api/users`, {})
+        return this.http.post<any>(`api/open/users/newAccount`, {name, email, password});
+    }
+
+    verifyNewAccnt(link: string){
+      if(!this.validateService.isValidLink(link))
+        return;
+      
+      return this.http.post<any>(`api/open/users/verification`, {link});
     }
 }

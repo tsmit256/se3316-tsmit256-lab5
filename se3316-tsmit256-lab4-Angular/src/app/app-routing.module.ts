@@ -8,6 +8,7 @@ import { TimetableResultsComponent } from './timetable-results/timetable-results
 import { SchedulesComponent } from './schedules/schedules.component';
 import { AuthGuard } from './_helpers/auth.guard';
 import { LoginComponent } from './login/login.component';
+import { AccntVerificationComponent } from './accnt-verification/accnt-verification.component';
 
 const routes: Routes = [
   { path: 'subjects', component: SubjectsComponent, canActivate: [AuthGuard]},
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: ':schedName/timetable-results', component: TimetableResultsComponent, canActivate: [AuthGuard]},
   { path: 'save-pair-options/:pair/schedules', component: SchedulesComponent, canActivate: [AuthGuard]},
   { path: 'login', component: LoginComponent},
+  { path: 'verification/:link', component: AccntVerificationComponent},
   { path: '**', redirectTo: '/subjects'}
 ];
 

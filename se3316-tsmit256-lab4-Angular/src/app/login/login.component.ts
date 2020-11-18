@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { first } from 'rxjs/operators';
 
 import { AuthenticationService } from '../_services/authentication.service';
 
@@ -19,6 +18,7 @@ export class LoginComponent implements OnInit {
   returnUrl: string;
   loginError = '';
   registerError = '';
+  verifyLink: string;
 
   constructor(
       private formBuilder: FormBuilder,
@@ -43,6 +43,8 @@ export class LoginComponent implements OnInit {
           email: ['', Validators.required],
           password: ['', Validators.required]
       })
+
+      this.verifyLink = '';
 
       // get return url from route parameters or default to '/'
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
@@ -89,13 +91,16 @@ export class LoginComponent implements OnInit {
 
     this.loading = true;
     let result = this.authenticationService.createUserAccnt(this.rf.name.value, this.rf.email.value, this.rf.password.value);
-
+  
     if(result){ //Don't continue if it doesn't return a value
+      
       result.subscribe(
           data => {
-              this.router.navigate([this.returnUrl]);
+              this.verifyLink = window.location.host + '/verification/' + data.link;
+              this.loading = false;
           },
-          error => {
+          error => { 
+              alert(error);
               this.registerError = error;
               this.loading = false;
           });
