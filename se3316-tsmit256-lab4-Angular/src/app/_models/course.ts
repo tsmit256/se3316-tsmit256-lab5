@@ -18,4 +18,5 @@ export interface Course{
         descr: string;
       }>
     catalog_description: string;
+    showDetail?: boolean;
   }

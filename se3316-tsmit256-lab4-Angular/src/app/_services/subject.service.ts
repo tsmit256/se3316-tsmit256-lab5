@@ -9,7 +9,7 @@ import { MessageService } from './message.service';
   providedIn: 'root'
 })
 export class SubjectService {
-  private subjectsUrl = 'api/secure/subjects';
+  private subjectsUrl = 'api/open/subjects';
   private classNamesUrl = 'api/open/classNames';
 
   constructor(

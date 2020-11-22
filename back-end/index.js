@@ -88,7 +88,7 @@ app.use('/api/secure', (req, res, next) => {
 
 //Back-end functionality 1a.
 //Get all available subject codes (referred to as subject codes in lab3 handout)
-app.get('/api/secure/subjects', (req,res) => { 
+app.get('/api/open/subjects', (req,res) => { 
     const subjectCodes = parseCourseDataFile.extractAllSubjects();
     res.send(subjectCodes);
 });
@@ -142,24 +142,24 @@ app.get('/api/open/courses/:subjectCode/:courseCode', (req,res) => {
 
 //Back-end functionality 3b.
 //Get course with specific subjectCode, courseCode, and component
-// app.get('/api/courses/:subjectCode/:courseCode/:component', (req,res) => {
-//     const component_dirty = req.params.component;
-//     const component_clean = validateAndSanitize.cleanCode(res,component_dirty);
+app.get('/api/open/courses/:subjectCode/:courseCode/:component', (req,res) => {
+    const component_dirty = req.params.component;
+    const component_clean = validateAndSanitize.cleanCode(res,component_dirty);
     
-//     const courseCode_dirty = req.params.courseCode;
-//     const courseCode_clean = validateAndSanitize.cleanCode(res,courseCode_dirty);
+    const courseCode_dirty = req.params.courseCode;
+    const courseCode_clean = validateAndSanitize.cleanCode(res,courseCode_dirty);
 
-//     const subjectCode_dirty = req.params.subjectCode;
-//     const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
+    const subjectCode_dirty = req.params.subjectCode;
+    const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
 
-//     //Extract object with specific subjectCode, courseCode, and component
-//     const course = parseCourseDataFile.extractCoursesByComponent(subjectCode_clean, courseCode_clean, component_clean);
+    //Extract object with specific subjectCode, courseCode, and component
+    const course = parseCourseDataFile.extractCoursesByComponent(subjectCode_clean, courseCode_clean, component_clean);
 
-//     if(!course){
-//         return res.status('404').send('The combination of course code, subject code, and component was not found.');
-//     }
-//     res.send(course);
-// });
+    if(!course){
+        return res.status('404').send('The combination of course code, subject code, and component was not found.');
+    }
+    res.send(course);
+});
 
 
 

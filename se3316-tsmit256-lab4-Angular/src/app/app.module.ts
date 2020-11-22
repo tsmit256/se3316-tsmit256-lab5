@@ -17,6 +17,7 @@ import { ErrorInterceptor } from './_helpers/error.interceptor';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AccntVerificationComponent } from './accnt-verification/accnt-verification.component';
 import { GoogleLoginProvider, SocialAuthService, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
+import { KeywordSearchComponent } from './keyword-search/keyword-search.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { GoogleLoginProvider, SocialAuthService, SocialAuthServiceConfig, Social
     SchedulesComponent,
     LoginComponent,
     AccntVerificationComponent,
+    KeywordSearchComponent,
   ],
   imports: [
     BrowserModule,

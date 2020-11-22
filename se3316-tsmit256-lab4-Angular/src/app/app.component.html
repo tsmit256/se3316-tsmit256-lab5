@@ -1,10 +1,14 @@
 <h1>{{title}}</h1>
 
+<nav>
+  <a routerLink="/login">Login</a>
+  <a routerLink="/subjects">Search Using Subject->CourseCode->Component</a>
+  <a routerLink="/keyword-search">Search Using Keywords</a>      
+</nav>
+
 <nav *ngIf="currentUser">
-      <a routerLink="/subjects">Browse All Subjects</a>
-      <a routerLink="/class-names">Browse All Class Names</a>
-      <a routerLink="/schedules">Manage Schedules</a>
-      <a (click)="logout()">Logout</a>
+  <a (click)="logout()">Logout</a>
+  <a routerLink="/schedules">Manage Schedules</a>
 </nav>
 
 <router-outlet></router-outlet>

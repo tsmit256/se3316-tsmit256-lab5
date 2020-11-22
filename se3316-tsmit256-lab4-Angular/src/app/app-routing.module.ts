@@ -9,20 +9,22 @@ import { SchedulesComponent } from './schedules/schedules.component';
 import { AuthGuard } from './_helpers/auth.guard';
 import { LoginComponent } from './login/login.component';
 import { AccntVerificationComponent } from './accnt-verification/accnt-verification.component';
+import { KeywordSearchComponent } from './keyword-search/keyword-search.component';
 
 const routes: Routes = [
-  { path: 'subjects', component: SubjectsComponent, canActivate: [AuthGuard]},
+  { path: 'subjects', component: SubjectsComponent},
   { path: 'class-names', component: ClassNamesComponent, canActivate: [AuthGuard]},
-  { path: 'course-codes/:subjectCode', component: CourseCodesComponent, canActivate: [AuthGuard]},
-  { path: 'course-components/:pair', component: CourseComponentsComponent, canActivate: [AuthGuard]},
-  { path: 'timetable-results/:subjectCode', component: TimetableResultsComponent, canActivate: [AuthGuard]},
-  { path: 'timetable-results/:subjectCode/:courseCode', component: TimetableResultsComponent, canActivate: [AuthGuard]},
-  { path: 'timetable-results/:subjectCode/:courseCode/:courseComponent', component: TimetableResultsComponent, canActivate: [AuthGuard]},
+  { path: 'course-codes/:subjectCode', component: CourseCodesComponent},
+  { path: 'course-components/:pair', component: CourseComponentsComponent},
+  { path: 'timetable-results/:subjectCode', component: TimetableResultsComponent},
+  { path: 'timetable-results/:subjectCode/:courseCode', component: TimetableResultsComponent},
+  { path: 'timetable-results/:subjectCode/:courseCode/:courseComponent', component: TimetableResultsComponent},
   { path: 'schedules', component: SchedulesComponent, canActivate: [AuthGuard]},
   { path: ':schedName/timetable-results', component: TimetableResultsComponent, canActivate: [AuthGuard]},
   { path: 'save-pair-options/:pair/schedules', component: SchedulesComponent, canActivate: [AuthGuard]},
   { path: 'login', component: LoginComponent},
   { path: 'verification/:link', component: AccntVerificationComponent},
+  { path: 'keyword-search', component: KeywordSearchComponent},
   { path: '**', redirectTo: '/subjects'}
 ];
 

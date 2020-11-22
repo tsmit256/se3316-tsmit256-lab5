@@ -21,6 +21,13 @@ export class TimetableResultsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCourses();
+    for(let i=0; i<this.courses.length; i++){
+      this.courses[i].showDetail = false;
+    }
+  }
+
+  toggleShowDetail(course: Course): void{
+    course.showDetail = !course.showDetail;
   }
 
   getCourses(): void{

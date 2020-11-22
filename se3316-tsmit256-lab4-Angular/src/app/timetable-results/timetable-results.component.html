@@ -4,8 +4,9 @@
 <ul class="timeTableResultsUL">
   <li *ngFor="let course of courses" class="timeTableResultLi">
     <div class="resultDetail">
-        <p class="courseTitle">{{course.subjectCode}} {{course.catalog_nbr}} {{course.className}}</p>
-        <p class="catalog_description">{{course.catalog_description}}</p>
+        <button (click)="toggleShowDetail(course)">Toggle Show Detail</button>
+        <p class="courseTitle">{{course.subject}} {{course.catalog_nbr}} {{course.className}}</p>
+        <p *ngIf="course.showDetail" class="catalog_description">{{course.catalog_description}}</p>
     </div>
 
     <table class="tableResult">
@@ -25,18 +26,21 @@
         </tr>
 
         <tr *ngFor="let comp of course.course_info">
-            <td>{{comp.class_nbr}}</td>
-            <td>{{comp.start_time}}</td>
-            <td>{{comp.descrlong}}</td>
-            <td>{{comp.end_time}}</td>
-            <td>{{comp.campus}}</td>
-            <td>{{comp.facility_ID}}</td>
-            <td>{{comp.days}}</td>
-            <td>{{comp.instructors}}</td>
+            <td *ngIf="course.showDetail; else blankBlock">{{comp.class_nbr}}</td>
+            <td *ngIf="course.showDetail; else blankBlock">{{comp.start_time}}</td>
+            <td *ngIf="course.showDetail; else blankBlock">{{comp.descrlong}}</td>
+            <td *ngIf="course.showDetail; else blankBlock">{{comp.end_time}}</td>
+            <td *ngIf="course.showDetail; else blankBlock">{{comp.campus}}</td>
+            <td *ngIf="course.showDetail; else blankBlock">{{comp.facility_ID}}</td>
+            <td *ngIf="course.showDetail; else blankBlock">{{comp.days}}</td>
+            <td *ngIf="course.showDetail; else blankBlock">{{comp.instructors}}</td>
             <td>{{comp.class_section}}</td>
             <td>{{comp.ssr_component}}</td>
-            <td>{{comp.enrl_stat}}</td>
-            <td>{{comp.descr}}</td>
+            <td *ngIf="course.showDetail; else blankBlock">{{comp.enrl_stat}}</td>
+            <td *ngIf="course.showDetail; else blankBlock">{{comp.descr}}</td>
+            <ng-template #blankBlock>
+              <td>...</td>
+            </ng-template>
         </tr>
     </table>
   </li>
