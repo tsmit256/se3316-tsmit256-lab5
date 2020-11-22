@@ -1,17 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { User } from '../_models/user';
 import { ValidateService } from './validate.service';
+import { SocialAuthService } from 'angularx-social-login';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
     private currentUserSubject: BehaviorSubject<User>;
     public currentUser: Observable<User>;
 
-    constructor(private http: HttpClient, private validateService: ValidateService) {
+    constructor(private http: HttpClient, 
+                private validateService: ValidateService,
+                private googleAuthService: SocialAuthService) {
         this.currentUserSubject = new BehaviorSubject<User>(JSON.parse(localStorage.getItem('currentUser')));
         this.currentUser = this.currentUserSubject.asObservable();
     }
@@ -48,10 +51,7 @@ export class AuthenticationService {
         return this.http.post<any>(`api/open/users/newAccount`, {name, email, password});
     }
 
-    verifyNewAccnt(link: string){
-      if(!this.validateService.isValidLink(link))
-        return;
-      
+    verifyNewAccnt(link: string){      
       return this.http.post<any>(`api/open/users/verification`, {link});
     }
 

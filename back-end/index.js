@@ -5,12 +5,14 @@ const low = require('lowdb'); //use lowdb for database funcitonality
 const FileSync = require('lowdb/adapters/FileSync'); //a component of lowdb for database functionality
 const jwt = require('jsonwebtoken');
 const {OAuth2Client} = require('google-auth-library');
-const GOOGLE_CLIENT_ID = '377942630150-bnac8vub3oso7hau5b8h3ap6004mh4kq.apps.googleusercontent.com';
+const bcrypt = require ('bcrypt');
 
 const app = express();
 const port = process.env.PORT || 3000; // 3000 will work for local development, but need process object for aws deployment
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || "GJhssdhfgtJSFKDTDTTaAGHGYTgjgjsdfjrrjgHKSSDFSgjgKKLOjgjdFHQZgaapwgJAofoivaoqosogaRGKAROivfotGSd";
 const ACCESS_TOKEN_LIFE = process.env.ACCESS_TOKEN_LIFE || 60*60;
+const GOOGLE_CLIENT_ID = '377942630150-bnac8vub3oso7hau5b8h3ap6004mh4kq.apps.googleusercontent.com';
+const SALT_ROUNDS = 10
 
 //lowdb database variables
 const adapter = new FileSync('db.json');
@@ -54,7 +56,6 @@ app.use('/', express.static('../se3316-tsmit256-lab4-Angular/dist/se3316-tsmit25
 
 //Make sure there is a valid token for any request trying to access secured content
 app.use('/api/secure', (req, res, next) => {
-    console.log("ACCESSING SECURE CONTENT");
     //Get the accessToken from headers
     let accessTokenHeader = req.headers.authorization;
     let accessToken;
@@ -78,7 +79,7 @@ app.use('/api/secure', (req, res, next) => {
             return res.status(401).send('You do not have access to this page');
     }
     catch(e){
-        return res.status(401).send('You session has expired');
+        return res.status(401).send('Your session has expired');
     }
     
     next();
@@ -365,8 +366,15 @@ app.post('/api/open/users/authenticate', (req,res) => {
         return res.status('404').send('A user account with that email does not exist');
     }
 
-    if(!(existingPassword == password_clean)){
+    if(!comparePasswords(password_clean, existingPassword)){
         return res.status('400').send('Password and email combination not correct');
+    }
+
+    const deactivatedStatus = user.get('deactivated').value();
+
+    if(deactivatedStatus){
+        //Return message if deactivated
+        return res.status('403').send('Your account is marked as deactivated. Please contact site administrator.');
     }
 
     var jwtBearerToken = issueJwtToken(user);
@@ -403,7 +411,6 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
     const verifyToken = new Promise(function(resolve, reject){
         verify(resolve, reject)
     }).then(data => {
-        console.log(payload);
 
         var user = db.get('users')
         .find({id: payload['sub']});
@@ -414,11 +421,11 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
 
         //Test if there is an email associated with this user
         if(!email){
-            console.log("HEY");
             //The user does not yet exist so create new information
             user = {
                 name: payload['name'],
                 email: payload['email'],
+                deactivated: false,
                 role: "regular",
                 id: payload['sub']
             };
@@ -427,8 +434,13 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
             db.get('users')
             .push(user)
             .write();
+        }
 
-            console.log("HEY2");
+        const deactivatedStatus = user.get('deactivated').value();
+
+        if(deactivatedStatus){
+            //Return message if deactivated
+            return res.status('403').send('Your account is marked as deactivated. Please contact site administrator.');
         }
     
         var jwtBearerToken = issueJwtToken(user);
@@ -463,12 +475,13 @@ app.post('/api/open/users/newAccount', (req, res) => {
             return res.status('400').send('An account with that email already exists');
     }
 
-    verificationLink = generateRanVerifLink(100);
+    verificationLink = hashPassword(email_clean); //hashing based on user information
    
     const newUser = {
         name: name_clean,
         email: email_clean,
-        password: password_clean,
+        password: hashPassword(password_clean),
+        deactivated: false,
         role: "regular",
         link: verificationLink
     };
@@ -484,11 +497,10 @@ app.post('/api/open/users/newAccount', (req, res) => {
 
 //This is used to verify the creation of a new account
 app.post('/api/open/users/verification', (req, res) => {
-    const dirty_link = req.body.link;
-    const clean_link = validateAndSanitize.cleanLink(res, dirty_link);
+    const link = req.body.link;
 
     var newUser = db.get('usersToConfirm')
-    .find({link: clean_link})
+    .find({link: link})
     .value();
     
     if(!newUser)
@@ -496,7 +508,7 @@ app.post('/api/open/users/verification', (req, res) => {
 
     //remove the user from the usersToConfirm database component
     db.get('usersToConfirm')
-    .remove({link: clean_link})
+    .remove({link: link})
     .write();
 
     delete newUser.link; //we no longer need to attach a link to the user
@@ -520,15 +532,7 @@ app.listen(port, () => {
 
 
 
-function generateRanVerifLink(linkLength) {
-    var link = '';
-    var chs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = chs.length;
-    for ( var i = 0; i < linkLength; i++ ) {
-       link += chs.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return link;
- }
+//The remaining part of this document is helper functions
 
  function issueJwtToken(user){
     const userId = user
@@ -551,4 +555,12 @@ function generateRanVerifLink(linkLength) {
     });
 
     return jwtBearerToken;
+ }
+
+ function hashPassword(password){
+    return bcrypt.hashSync(password, SALT_ROUNDS);
+ }
+
+ function comparePasswords(password2, hash){
+     return bcrypt.compareSync(password2, hash);
  }

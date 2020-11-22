@@ -60,7 +60,7 @@ export class ValidateService {
         alert('Password should be between 1 and 100 characters');
         return false;
     }
-    if(/[<>]/.test(pass)){
+    if(/<>/.test(pass)){
         alert('Please remove <> characters from password');
         return false;
     }
@@ -81,13 +81,5 @@ export class ValidateService {
     
     return true;
   } 
-
-  isValidLink(link: string){
-    if(link.length != 100 || /[ `#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(link)){
-      alert("Link should be 100 characters and not include special characters");
-      return false;
-    }
-    return true;
-  }
 
 }

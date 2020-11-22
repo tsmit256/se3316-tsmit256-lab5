@@ -106,6 +106,7 @@ export class LoginComponent implements OnInit {
           data => {
               this.verifyLink = window.location.host + '/verification/' + data.link;
               this.loading = false;
+              alert(`Email Template:\nfrom: 'Do Not Reply <webtechlab5@gmail.com>',\nsubject: 'Please confirm account',\nhtml: 'Click the following link to confirm your account</p><p>${this.verifyLink}<p>\ntext: 'Please confirm your account by clicking the following link: ${this.verifyLink}`);
           },
           error => { 
               alert(error);

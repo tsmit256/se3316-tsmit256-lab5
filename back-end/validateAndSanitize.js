@@ -45,7 +45,7 @@ function cleanPassword(res, dirtyInput){
         return res.status('400').send('Password should be between 1 and 100 characters');
     }
 
-    const cleanInput = dirtyInput.replace(/[<>]/g, "");
+    const cleanInput = dirtyInput.replace(/<>/g, "");
     return cleanInput;
 } 
 
@@ -58,20 +58,10 @@ function cleanName(res, dirtyInput){
     return cleanInput;
 }
 
-function cleanLink(res, dirtyInput){
-    if(dirtyInput.length != 100){
-        return res.status('400').send('Verification links are 30 characters');
-    }
-
-    const cleanInput = dirtyInput.replace(/[`#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/g, "", "");
-    return cleanInput;
-}
-
 
 exports.cleanCode = cleanCode;
 exports.cleanScheduleName = cleanScheduleName;
 exports.cleanEmail = cleanEmail;
 exports.cleanPassword = cleanPassword;
 exports.cleanName = cleanName;
-exports.cleanLink = cleanLink;
 
