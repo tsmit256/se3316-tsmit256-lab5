@@ -68,14 +68,28 @@ export class ValidateService {
     return true;
   } 
 
-  //Remove special characters from password and make less than 100 characters
+  //Remove special characters from name and make less than 100 characters
   isValidName(name: string){
     if(name.length > 200 || name.length < 1){
         alert('Name should be between 1 and 200 characters');
         return false;
     }
     if(/[<>]/.test(name)){
-        alert('Please remove <> characters from name');
+        alert('Please remove <> and [] characters from name');
+        return false;
+    }
+    
+    return true;
+  } 
+
+  //Remove special characters from keyword and make <= 200 characters
+  isValidKeyword(keyword: string){
+    if(keyword.length > 200 || keyword.length < 1){
+        alert('Name should be between 1 and 200 characters');
+        return false;
+    }
+    if(/[<>]/.test(name)){
+        alert('Please remove <> and [] characters from name');
         return false;
     }
     

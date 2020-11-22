@@ -146,6 +146,20 @@ export class CourseService {
     return result;
   }
 
+  getCoursesByKeyword(keyword: string): Observable<Course[]>{
+    if(!this.validateService.isValidKeyword(keyword)){
+      return;
+    }
+
+    const url = `${this.courseUrl}/${keyword}`;
+    return this.http.get<Course[]>(url)
+      .pipe(
+        tap(_ => this.log(`fetched courses keyword=${keyword}`)),
+        catchError(this.handleError<Course[]>(`getCoursesByKeyword keyword=${keyword}`, []))
+      );
+  }
+
+
   /** Log a CourseService message with the MessageService */
   private log(message: string) {
     this.messageService.add(`CourseService: ${message}`);

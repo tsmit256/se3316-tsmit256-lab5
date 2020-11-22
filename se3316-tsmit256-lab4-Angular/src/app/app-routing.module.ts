@@ -19,6 +19,7 @@ const routes: Routes = [
   { path: 'timetable-results/:subjectCode', component: TimetableResultsComponent},
   { path: 'timetable-results/:subjectCode/:courseCode', component: TimetableResultsComponent},
   { path: 'timetable-results/:subjectCode/:courseCode/:courseComponent', component: TimetableResultsComponent},
+  { path: 'timetable-results-keyword/:keyword', component: TimetableResultsComponent},
   { path: 'schedules', component: SchedulesComponent, canActivate: [AuthGuard]},
   { path: ':schedName/timetable-results', component: TimetableResultsComponent, canActivate: [AuthGuard]},
   { path: 'save-pair-options/:pair/schedules', component: SchedulesComponent, canActivate: [AuthGuard]},
