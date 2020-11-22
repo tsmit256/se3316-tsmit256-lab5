@@ -84,8 +84,8 @@ export class ValidateService {
 
   //Remove special characters from keyword and make <= 200 characters
   isValidKeyword(keyword: string){
-    if(keyword.length > 200 || keyword.length < 1){
-        alert('Name should be between 1 and 200 characters');
+    if(keyword.length > 200 || keyword.length < 4){
+        alert('Name should be between 4 and 200 characters');
         return false;
     }
     if(/[<>]/.test(name)){

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { EMPTY, Observable, of } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { ClassName, Subject } from '../_models/subject';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, map, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { catchError, tap } from 'rxjs/operators';
 import { MessageService } from './message.service';
 
 @Injectable({
@@ -49,9 +49,9 @@ export class SubjectService {
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
-      alert(error.error);
+      alert(error);
     
-      this.log(`${operation} failed: ${error.status} ${error.statusText} - ${error.error}`);
+      this.log(`${operation} failed: ${error}`);
 
       // Let the app keep running by returning an empty result.
       return EMPTY;

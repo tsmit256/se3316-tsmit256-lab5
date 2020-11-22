@@ -14,13 +14,16 @@ export class TimetableResultsComponent implements OnInit {
   courseCode;
   courseComponent;
   schedName;
+  keyword;
 
   constructor(    
     private route: ActivatedRoute,
     private courseService: CourseService) { }
 
   ngOnInit(): void {
+    this.courses = [];
     this.getCourses();
+    //Set all showdetails to be false initially (only show glance at beginning)
     for(let i=0; i<this.courses.length; i++){
       this.courses[i].showDetail = false;
     }
@@ -32,12 +35,16 @@ export class TimetableResultsComponent implements OnInit {
 
   getCourses(): void{
     this.subjectCode = this.route.snapshot.paramMap.get('subjectCode');
+    this.keyword = this.route.snapshot.paramMap.get('keyword');
 
     //if there is a subjectCode part of the url, then show results via getCoursesFromSearch()
     if(this.subjectCode){
       this.getCoursesFromSearch();
     }
-    else{//if there is no subjectCode part of the url, then show results via getCoursesFromSchedule()
+    else if(this.keyword){ //if there is a keyword part of the url, then show results via keyword
+      this.getCoursesFromKeyword();
+    }
+    else{//if there is no subjectCode or keyword part of the url, then show results via getCoursesFromSchedule()
       this.getCoursesFromSchedule();
     }
   }
@@ -59,11 +66,18 @@ export class TimetableResultsComponent implements OnInit {
     }
 
     tempObserv.subscribe(courses => {
-      this.courses = courses;})
+      this.courses = courses;});
   }
 
   getCoursesFromSchedule(): void{
     this.schedName = this.route.snapshot.paramMap.get('schedName');
     this.courses = this.courseService.getCoursesBySchedName(this.schedName);
+  }
+
+  getCoursesFromKeyword(): void{
+    var tempObserv = this.courseService.getCoursesByKeyword(this.keyword);
+    tempObserv.subscribe(courses => {
+      this.courses = courses;
+    });
   }
 }

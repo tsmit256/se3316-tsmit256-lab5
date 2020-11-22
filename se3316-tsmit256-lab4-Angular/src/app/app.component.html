@@ -1,7 +1,10 @@
 <h1>{{title}}</h1>
 
-<nav>
+<nav *ngIf="!currentUser">
   <a routerLink="/login">Login</a>
+</nav>
+
+<nav>
   <a routerLink="/subjects">Search Using Subject->CourseCode->Component</a>
   <a routerLink="/keyword-search">Search Using Keywords</a>      
 </nav>

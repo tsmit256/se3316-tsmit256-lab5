@@ -151,7 +151,7 @@ export class CourseService {
       return;
     }
 
-    const url = `${this.courseUrl}/${keyword}`;
+    const url = `/api/open/keyword/courses/${keyword}`;
     return this.http.get<Course[]>(url)
       .pipe(
         tap(_ => this.log(`fetched courses keyword=${keyword}`)),
@@ -173,9 +173,9 @@ export class CourseService {
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
-      alert(error.error);
+      alert(error);
     
-      this.log(`${operation} failed: ${error.status} ${error.statusText} - ${error.error}`);
+      this.log(`${operation} failed: ${error}`);
 
       // Let the app keep running by returning an empty result.
       return EMPTY;

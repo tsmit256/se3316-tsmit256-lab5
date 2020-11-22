@@ -94,9 +94,9 @@ export class ScheduleService {
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
-      alert(error.error);
+      alert(error);
     
-      this.log(`${operation} failed: ${error.status} ${error.statusText} - ${error.error}`);
+      this.log(`${operation} failed: ${error}`);
 
       // Let the app keep running by returning an empty result.
       return EMPTY;

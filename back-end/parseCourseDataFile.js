@@ -1,4 +1,5 @@
 const timetableData = require('./Lab3-timetable-data.json'); //path to the timetable data json
+const stringSimilarity = require('string-similarity');
 
 function extractAllSubjects(){
     const subjects = [];
@@ -40,7 +41,7 @@ function extractAllClassNames(){
 }
 
 
-//This function assumes a valid subjectCode input (verification is in server's index.js)
+//This function assumes a valid subjectCode input (verification is in server's validateAndSantize.js)
 function extractCoursesBySubject(subjectCode){
     const courses = [];
     for(i in timetableData){ 
@@ -100,8 +101,61 @@ function extractCoursesByComponent(inputtedSubjectCode, inputtedCatalog_nbr, inp
     return tempCourse;
 }
 
+//This function assumes a valid keyword input (verification is in server's validateAndSantize.js)
+function extractCoursesByKeyword(inputtedKeyword){
+    const courses = [];
+    for(i in timetableData){ 
+
+        //compare each courseCode to see if there are signficant similarities
+        if(isSimilarString(inputtedKeyword, timetableData[i].catalog_nbr)){
+            courses.push(timetableData[i]);
+        }
+        //if courseCode wasn't similar, check if className is similar
+        else if(isSimilarString(inputtedKeyword, timetableData[i].className)){
+            courses.push(timetableData[i]);
+        }
+        
+    }
+    if(courses.length > 0){ //If there are matching courses, return them
+        return courses;
+    }
+    else{ //If no result was found
+        return false; //bad request
+    }
+}
+
+
+//This function determines if two strings are similar
+function isSimilarString(string1, string2){
+    //Remove case-sensitive differences
+    string1 = string1.toString().toLowerCase();
+    string2 = string2.toString().toLowerCase();
+
+    //Ignore whitespace
+    string1 = string1.replace(/ +/g, "");
+    string2 = string2.replace(/ +/g, "");
+
+    //Case 1: strings are identical
+    if(string1 == string2){
+        return true;
+    }
+
+    //Case 2: one is a substring of the other
+    if(string1.includes(string2) || string2.includes(string1)){
+        return true;
+    }
+
+    //Case 3: strings have high degree of similarity
+    if(stringSimilarity.compareTwoStrings(string1, string2) > 0.5){
+        return true;
+    }
+
+    return false; //return false if none of the above cases were true 
+}
+
 exports.extractAllSubjects = extractAllSubjects;
 exports.extractAllClassNames = extractAllClassNames;
 exports.extractCoursesBySubject = extractCoursesBySubject;
 exports.extractCoursesByCatalogNbr = extractCoursesByCatalogNbr;
 exports.extractCoursesByComponent = extractCoursesByComponent;
+exports.extractCoursesByKeyword = extractCoursesByKeyword;

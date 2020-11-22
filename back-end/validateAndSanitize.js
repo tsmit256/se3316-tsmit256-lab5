@@ -58,10 +58,20 @@ function cleanName(res, dirtyInput){
     return cleanInput;
 }
 
+function cleanKeyword(res, dirtyInput){
+    if(dirtyInput.length > 200 || dirtyInput.length < 4){
+        return res.status('400').send('Keyword should be between 1 and 200 characters');
+    }
+
+    const cleanInput = dirtyInput.replace(/[<>]/g, "");
+    return cleanInput;
+}
+
 
 exports.cleanCode = cleanCode;
 exports.cleanScheduleName = cleanScheduleName;
 exports.cleanEmail = cleanEmail;
 exports.cleanPassword = cleanPassword;
 exports.cleanName = cleanName;
+exports.cleanKeyword = cleanKeyword;
 

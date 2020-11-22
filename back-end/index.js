@@ -163,6 +163,22 @@ app.get('/api/open/courses/:subjectCode/:courseCode/:component', (req,res) => {
 
 
 
+app.get('/api/open/keyword/courses/:keyword', (req,res) => {
+    const keyword_dirty = req.params.keyword;
+    const keyword_clean = validateAndSanitize.cleanKeyword(res, keyword_dirty);
+
+    //Extract object with specific keyword in either 
+    const courses = parseCourseDataFile.extractCoursesByKeyword(keyword_clean);
+
+    if(!courses){ //courses will be false if not found by parsing function above.
+        return res.status('404').send('This keyword has no similar courseCodes or classNames.');
+    }
+    res.send(courses);
+
+});
+
+
+
 app.route('/api/open/schedules')
   .get((req,res) => {
     const schedules = db.get('schedules').value();
