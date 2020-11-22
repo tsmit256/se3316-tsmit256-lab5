@@ -27,6 +27,10 @@ function cleanEmail(res, dirtyInput){
         return res.status('400').send('Email should have exactly one "@" character');
     }
 
+    if(!/.*[@].+\..+/g.test(dirtyInput)){
+        return res.status('400').send("There should be a '.' character after '@' and '.' should have characters on both sides");
+    }
+
     if(dirtyInput.length > 320 || dirtyInput.length < 1){
         return res.status('400').send('Email should be between 1 and 320 characters');
     }

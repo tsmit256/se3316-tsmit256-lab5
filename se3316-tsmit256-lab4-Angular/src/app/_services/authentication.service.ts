@@ -54,4 +54,14 @@ export class AuthenticationService {
       
       return this.http.post<any>(`api/open/users/verification`, {link});
     }
+
+    sendGoogleTokenToApi(token: string){
+      return this.http.post<any>('api/open/users/googleAuthenticate', {token})
+        .pipe(map(user => {
+          // store user details and jwt token in local storage to keep user logged in between page refreshes
+          localStorage.setItem('currentUser', JSON.stringify(user));
+          this.currentUserSubject.next(user);
+          return user;
+      }));
+    }
 }

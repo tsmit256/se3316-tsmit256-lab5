@@ -10,8 +10,8 @@ import { ValidateService} from './validate.service'
   providedIn: 'root'
 })
 export class ScheduleService {
-  scheduleCountsUrl = 'api/scheduleCounts';
-  schedulesUrl = 'api/schedules';
+  scheduleCountsUrl = 'api/open/scheduleCounts';
+  schedulesUrl = 'api/open/schedules';
   tempScheduleCounts: ScheduleCount[];
 
   httpOptions = {

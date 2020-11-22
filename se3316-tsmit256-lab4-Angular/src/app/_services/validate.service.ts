@@ -36,6 +36,11 @@ export class ValidateService {
       return false;
     }
 
+    if(!/.*[@].+\..+/g.test(email)){
+      alert("There should be a '.' character after '@' and '.' should have characters on both sides");
+      return false;
+    }
+
     if(email.length > 320 || email.length < 1){
         alert('Email should be between 1 and 320 characters');
         return false;

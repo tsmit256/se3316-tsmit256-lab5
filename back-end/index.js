@@ -4,13 +4,16 @@ const validateAndSanitize = require('./validateAndSanitize'); //seperate js file
 const low = require('lowdb'); //use lowdb for database funcitonality
 const FileSync = require('lowdb/adapters/FileSync'); //a component of lowdb for database functionality
 const jwt = require('jsonwebtoken');
+const {OAuth2Client} = require('google-auth-library');
+const GOOGLE_CLIENT_ID = '377942630150-bnac8vub3oso7hau5b8h3ap6004mh4kq.apps.googleusercontent.com';
 
 const app = express();
 const port = process.env.PORT || 3000; // 3000 will work for local development, but need process object for aws deployment
-
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || "GJhssdhfgtJSFKDTDTTaAGHGYTgjgjsdfjrrjgHKSSDFSgjgKKLOjgjdFHQZgaapwgJAofoivaoqosogaRGKAROivfotGSd";
+const ACCESS_TOKEN_LIFE = process.env.ACCESS_TOKEN_LIFE || 60*60;
 
 //lowdb database variables
-const adapter = new FileSync('dbSchedule.json');
+const adapter = new FileSync('db.json');
 const db = low(adapter);
 
 app.use(express.json()); //Middleware to enable parsing of json objects
@@ -49,10 +52,42 @@ app.use('/api/open/users', (req,res,next) => { //for routes anything to do with 
 app.use('/', express.static('../se3316-tsmit256-lab4-Angular/dist/se3316-tsmit256-lab4-Angular')); //used to serve front-end static files from static folder
 
 
+//Make sure there is a valid token for any request trying to access secured content
+app.use('/api/secure', (req, res, next) => {
+    console.log("ACCESSING SECURE CONTENT");
+    //Get the accessToken from headers
+    let accessTokenHeader = req.headers.authorization;
+    let accessToken;
+    //accessTokenHeader should be in the form 'Bearer 1234567'
+    var parts = accessTokenHeader.split(' ');
+
+    //Make sure there is two parts and that 'Bearer' is in the header
+    if(parts.length === 2 && /^Bearer$/i.test(parts[0])){
+        accessToken = parts[1];
+    }
+    else{
+        return res.status(403).send('The access token is not correctly formatted');
+    }
+
+    let payload;
+    try{
+        //verify the accessToken
+        payload = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
+
+        if(payload.role != 'regular')
+            return res.status(401).send('You do not have access to this page');
+    }
+    catch(e){
+        return res.status(401).send('You session has expired');
+    }
+    
+    next();
+})
+
 
 //Back-end functionality 1a.
 //Get all available subject codes (referred to as subject codes in lab3 handout)
-app.get('/api/subjects', (req,res) => { 
+app.get('/api/secure/subjects', (req,res) => { 
     const subjectCodes = parseCourseDataFile.extractAllSubjects();
     res.send(subjectCodes);
 });
@@ -61,16 +96,16 @@ app.get('/api/subjects', (req,res) => {
 
 //Back-end functionality 1b.
 //Get all available classNames (referred to as descriptions in lab3 handout)
-app.get('/api/classNames', (req,res) => {
-    const classNames = parseCourseDataFile.extractAllClassNames();
-    res.send(classNames);
-});
+// app.get('/api/open/classNames', (req,res) => {
+//     const classNames = parseCourseDataFile.extractAllClassNames();
+//     res.send(classNames);
+// });
 
 
 
 //Back-end functionality 2.
 //Get all course codes for a given subjectCode
-app.get('/api/courses/:subjectCode', (req,res) => {
+app.get('/api/open/courses/:subjectCode', (req,res) => {
     const subjectCode_dirty = req.params.subjectCode;
     const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
     //Extract object with the specific subjectCode
@@ -86,7 +121,7 @@ app.get('/api/courses/:subjectCode', (req,res) => {
 
 //Back-end functionality 3a.
 //Get course with specific subjectCode and courseCode
-app.get('/api/courses/:subjectCode/:courseCode', (req,res) => {
+app.get('/api/open/courses/:subjectCode/:courseCode', (req,res) => {
     const courseCode_dirty = req.params.courseCode;
     const courseCode_clean = validateAndSanitize.cleanCode(res,courseCode_dirty);
     
@@ -106,34 +141,36 @@ app.get('/api/courses/:subjectCode/:courseCode', (req,res) => {
 
 //Back-end functionality 3b.
 //Get course with specific subjectCode, courseCode, and component
-app.get('/api/courses/:subjectCode/:courseCode/:component', (req,res) => {
-    const component_dirty = req.params.component;
-    const component_clean = validateAndSanitize.cleanCode(res,component_dirty);
+// app.get('/api/courses/:subjectCode/:courseCode/:component', (req,res) => {
+//     const component_dirty = req.params.component;
+//     const component_clean = validateAndSanitize.cleanCode(res,component_dirty);
     
-    const courseCode_dirty = req.params.courseCode;
-    const courseCode_clean = validateAndSanitize.cleanCode(res,courseCode_dirty);
+//     const courseCode_dirty = req.params.courseCode;
+//     const courseCode_clean = validateAndSanitize.cleanCode(res,courseCode_dirty);
 
-    const subjectCode_dirty = req.params.subjectCode;
-    const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
+//     const subjectCode_dirty = req.params.subjectCode;
+//     const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
 
-    //Extract object with specific subjectCode, courseCode, and component
-    const course = parseCourseDataFile.extractCoursesByComponent(subjectCode_clean, courseCode_clean, component_clean);
+//     //Extract object with specific subjectCode, courseCode, and component
+//     const course = parseCourseDataFile.extractCoursesByComponent(subjectCode_clean, courseCode_clean, component_clean);
 
-    if(!course){
-        return res.status('404').send('The combination of course code, subject code, and component was not found.');
-    }
-    res.send(course);
-});
+//     if(!course){
+//         return res.status('404').send('The combination of course code, subject code, and component was not found.');
+//     }
+//     res.send(course);
+// });
 
 
 
-app.route('/api/schedules')
+app.route('/api/open/schedules')
   .get((req,res) => {
     const schedules = db.get('schedules').value();
     res.send(schedules);
-})
+});
+
 //Back-end functionality 4
 //Create a new schedule with a given schedule name
+app.route('/api/secure/schedules')
   .post((req, res) => {
     const name_dirty = req.body.name;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
@@ -176,7 +213,7 @@ app.route('/api/schedules')
 
 //Back-end functionality 5.
 //Save a list of subject code, course code pairs under a given schedule name.
-app.route('/api/schedules/:scheduleName')
+app.route('/api/secure/schedules/:scheduleName')
   .post((req,res) =>{
     const name_dirty = req.params.scheduleName;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
@@ -240,10 +277,11 @@ app.route('/api/schedules/:scheduleName')
       .write();
 
     res.send(schedule);    
-})
+});
 
 //Back-end functionality 6.
 //Get a list of subject code, course code pairs for a given schedule
+app.route('/api/open/schedules/:scheduleName')
   .get((req,res) => {
     const name_dirty = req.params.scheduleName;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
@@ -268,6 +306,7 @@ app.route('/api/schedules/:scheduleName')
 
 //Back-end functionality 7.
 //Delete a schedule with a given name
+app.route('/api/secure/schedules/:scheduleName')
   .delete((req,res) => {
     const name_dirty = req.params.scheduleName;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
@@ -291,7 +330,7 @@ app.route('/api/schedules/:scheduleName')
 
 //Back-end functionality 8.
 //Get a list of schedule names and number of courses that are saved in each schedule
-app.get('/api/scheduleCounts', (req,res) => {
+app.get('/api/open/scheduleCounts', (req,res) => {
     //Get the existing schedules
     const schedules = db.get('schedules')
     .value();
@@ -327,38 +366,85 @@ app.post('/api/open/users/authenticate', (req,res) => {
     }
 
     if(!(existingPassword == password_clean)){
-        return res.status('401').send('Password incorrect');
+        return res.status('400').send('Password and email combination not correct');
     }
 
-    const userId = user
-      .get('id')
-      .value();
-
-    const firstName = user
-      .get('firstName')
-      .value();
-    
-    const role = user
-      .get('role')
-      .value();
-
-    let payload = {firstName: firstName, role: role};
-
-    const jwtBearerToken = jwt.sign(payload, "" + process.env.ACCESS_TOKEN_SECRET, {
-        algorithm: 'HS256',
-        expiresIn: 60, //process.env.ACCESS_TOKEN_LIFE,
-        subject: toString(userId)
-    });
+    var jwtBearerToken = issueJwtToken(user);
 
     // set it in the HTTP Response body
     res.status(200).json({
-        idToken: jwtBearerToken, 
-        expiresIn: 60//process.env.ACCESS_TOKEN_LIFE
+        token: jwtBearerToken
     });    
 
 });
 
 
+//User authentication using google api
+app.post('/api/open/users/googleAuthenticate', (req, res) => {
+    const token = req.body.token;
+    const client = new OAuth2Client(GOOGLE_CLIENT_ID);
+    var payload;
+    
+    async function verify(resolve, reject) {
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: GOOGLE_CLIENT_ID,
+        });
+        payload = ticket.getPayload();
+        if(payload){
+            resolve(payload);
+        }
+        else{
+            reject("invalid token");
+        }
+    }
+    
+    //Ensure that this google token is valid before issuing a new JWT token
+    const verifyToken = new Promise(function(resolve, reject){
+        verify(resolve, reject)
+    }).then(data => {
+        console.log(payload);
+
+        var user = db.get('users')
+        .find({id: payload['sub']});
+    
+        const email = user
+        .get('email')
+        .value();
+
+        //Test if there is an email associated with this user
+        if(!email){
+            console.log("HEY");
+            //The user does not yet exist so create new information
+            user = {
+                name: payload['name'],
+                email: payload['email'],
+                role: "regular",
+                id: payload['sub']
+            };
+
+            //add the user to the users database component
+            db.get('users')
+            .push(user)
+            .write();
+
+            console.log("HEY2");
+        }
+    
+        var jwtBearerToken = issueJwtToken(user);
+    
+        // set it in the HTTP Response body
+        res.status(200).json({
+            token: jwtBearerToken
+        }); 
+    }).catch(err => {
+        console.error;
+        res.status('500').send('Google verification process failed')
+    });
+});
+
+
+// Creating a new account
 app.post('/api/open/users/newAccount', (req, res) => {
     const name_dirty = req.body.name;
     const email_dirty = req.body.email;
@@ -374,7 +460,7 @@ app.post('/api/open/users/newAccount', (req, res) => {
 
     for(var i in existingUsers){
         if(existingUsers[i].email == email_clean)
-            return res.status('404').send('An account with that email already exists');
+            return res.status('400').send('An account with that email already exists');
     }
 
     verificationLink = generateRanVerifLink(100);
@@ -442,4 +528,27 @@ function generateRanVerifLink(linkLength) {
        link += chs.charAt(Math.floor(Math.random() * charactersLength));
     }
     return link;
+ }
+
+ function issueJwtToken(user){
+    const userId = user
+    .get('id')
+    .value();
+
+    const name = user
+    .get('name')
+    .value();
+
+    const role = user
+    .get('role')
+    .value();
+
+    let payload = {name: name, role: role, id: userId};
+
+    const jwtBearerToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
+        
+        expiresIn: ACCESS_TOKEN_LIFE
+    });
+
+    return jwtBearerToken;
  }

@@ -11,7 +11,7 @@ import { ValidateService } from './validate.service';
   providedIn: 'root'
 })
 export class CourseService {
-  private courseUrl = 'api/courses';
+  private courseUrl = 'api/open/courses';
   tempCourses: Course[];
 
   constructor(

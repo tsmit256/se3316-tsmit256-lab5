@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+import { SocialAuthService } from "angularx-social-login";
+import { SocialUser } from "angularx-social-login";
+import { GoogleLoginProvider } from "angularx-social-login";
 import { AuthenticationService } from '../_services/authentication.service';
 
 @Component({
@@ -19,12 +22,14 @@ export class LoginComponent implements OnInit {
   loginError = '';
   registerError = '';
   verifyLink: string;
+  googleUser: SocialUser;
 
   constructor(
       private formBuilder: FormBuilder,
       private route: ActivatedRoute,
       private router: Router,
-      private authenticationService: AuthenticationService
+      private authenticationService: AuthenticationService,
+      private googleAuthService: SocialAuthService
   ) { 
       // redirect to home if already logged in
       if (this.authenticationService.currentUserValue) { 
@@ -48,6 +53,10 @@ export class LoginComponent implements OnInit {
 
       // get return url from route parameters or default to '/'
       this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+      this.googleAuthService.authState.subscribe((user) => {
+        this.googleUser = user;
+      });
   }
 
   // convenience getter for easy access to form fields
@@ -71,7 +80,6 @@ export class LoginComponent implements OnInit {
                 this.router.navigate([this.returnUrl]);
             },
             error => {
-                alert(error);
                 this.loginError = error;
                 this.loading = false;
             });
@@ -108,5 +116,29 @@ export class LoginComponent implements OnInit {
     else{
       this.loading = false;
     }  
-}
+  }
+
+
+  signInWithGoogle(): void {
+    this.googleAuthService.signIn(GoogleLoginProvider.PROVIDER_ID)
+    .then((userData) => {
+      //Send the google user token to server
+      this.sendTokenToApi(userData.idToken);
+    })
+  }
+
+  //send the google user token to server
+  sendTokenToApi(token: string): void{
+    this.authenticationService.sendGoogleTokenToApi(token)
+    .subscribe(
+        data => {
+            this.router.navigate([this.returnUrl]);
+        },
+        error => {
+            this.loginError = error;
+            this.loading = false;
+        }
+    );
+  }
+
 }

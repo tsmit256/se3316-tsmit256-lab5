@@ -4,5 +4,6 @@ export interface User {
     password: string;
     name: string,
     role: string;
+    deactivated: boolean;
     token?: string;
 }
