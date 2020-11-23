@@ -1,0 +1,34 @@
+.tableResult{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.tableResult td, th{
+    border: 1px solid black;
+}
+
+.tableResult td{
+    padding: 5px;
+    background-color: rgb(216, 216, 216);
+}
+
+.tableResult th{
+    text-align: left;
+    background-color: gray;
+    color: white;
+    padding: 10px;
+}
+
+.contentClass {
+    position: relative;
+    left: 0;
+    background-color: #EEE;
+    margin: 1em;
+    padding: 1em;
+    border-radius: 4px;
+}
+.contentClass:hover {
+    color: #607D8B;
+    background-color: #DDD;
+    left: .1em;
+}

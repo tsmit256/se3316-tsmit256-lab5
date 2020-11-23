@@ -26,7 +26,7 @@ app.use((req,res,next) => { //for all routes
     next(); //keep going
 });
 
-app.use('/api/schedules', (req,res,next) =>{ //for routes including anything to do with schedules
+app.use(['/api/open/schedules', '/api/secure/schedules'], (req,res,next) =>{ //for routes including anything to do with schedules
     var test = db.get('schedules').value();
 
     if(!test){ //If the schedules component of the database does not exist, then create a default
@@ -177,10 +177,20 @@ app.get('/api/open/keyword/courses/:keyword', (req,res) => {
 
 });
 
+//The 'open' allows only access to public schedules
+app.get('/api/open/schedules', (req, res) => {
+    //get all schedules that are public
+    const schedules = db.get('schedules').filter({public: true}).value();
+
+    //Limit the info to only name, lastModified, creatorName, count
+    limitedInfoSchedules = validateAndSanitize.limitToPublicSchedules(schedules);
+
+    res.send(limitedInfoSchedules);
+});
 
 
-app.route('/api/open/schedules')
-  .get((req,res) => {
+//The 'secure' allows access to user-specific schedules
+app.get('/api/secure/schedules', (req,res) => {
     const schedules = db.get('schedules').value();
     res.send(schedules);
 });
@@ -191,10 +201,13 @@ app.route('/api/secure/schedules')
   .post((req, res) => {
     const name_dirty = req.body.name;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
-
+    
     const schedule = {
         name: name_clean,
-        pairs: []
+        pairs: [],
+        creatorName: "blank",
+        lastModified: Date.now(),
+        public: true
     };
 
     const existingScheds = db.get('schedules').value();
@@ -347,7 +360,7 @@ app.route('/api/secure/schedules/:scheduleName')
 
 //Back-end functionality 8.
 //Get a list of schedule names and number of courses that are saved in each schedule
-app.get('/api/open/scheduleCounts', (req,res) => {
+app.get('/api/secure/scheduleCounts', (req,res) => {
     //Get the existing schedules
     const schedules = db.get('schedules')
     .value();

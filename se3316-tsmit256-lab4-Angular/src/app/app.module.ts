@@ -18,6 +18,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AccntVerificationComponent } from './accnt-verification/accnt-verification.component';
 import { GoogleLoginProvider, SocialAuthService, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
 import { KeywordSearchComponent } from './keyword-search/keyword-search.component';
+import { PublicCourseListsComponent } from './public-course-lists/public-course-lists.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { KeywordSearchComponent } from './keyword-search/keyword-search.componen
     LoginComponent,
     AccntVerificationComponent,
     KeywordSearchComponent,
+    PublicCourseListsComponent,
   ],
   imports: [
     BrowserModule,

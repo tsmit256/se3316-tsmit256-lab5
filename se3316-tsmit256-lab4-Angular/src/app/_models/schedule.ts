@@ -15,3 +15,10 @@ export interface Pair{
     subjectCode: string;
     catalog_nbr: string;
 }
+
+export interface PublicSchedule{
+    name: string;
+    lastModified: Date;
+    creatorName: string;
+    courseCount: number;
+}

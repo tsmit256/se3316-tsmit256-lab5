@@ -3,15 +3,16 @@ import { EMPTY, Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { MessageService } from './message.service';
-import { Schedule, ScheduleCount } from '../_models/schedule';
+import { PublicSchedule, Schedule, ScheduleCount } from '../_models/schedule';
 import { ValidateService} from './validate.service'
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScheduleService {
-  scheduleCountsUrl = 'api/open/scheduleCounts';
-  schedulesUrl = 'api/open/schedules';
+  scheduleCountsUrl = 'api/secure/scheduleCounts';
+  schedulesUrl = 'api/secure/schedules';
+  publicSchedsUrl = 'api/open/schedules';
   tempScheduleCounts: ScheduleCount[];
 
   httpOptions = {
@@ -81,6 +82,16 @@ export class ScheduleService {
       catchError(this.handleError<Schedule>('savePairToSched'))
     );
   }
+
+  getPublicSchedules(): Observable<PublicSchedule[]> {
+    return this.http.get<PublicSchedule[]>(this.publicSchedsUrl)
+      .pipe(
+        tap(_ => this.log(`fetched public schedules`)),
+        catchError(this.handleError<PublicSchedule[]>(`getPublicSchedules`, []))
+      );
+  }
+
+
 
   /** Log a ScheduleService message with the MessageService */
   private log(message: string) {

@@ -67,6 +67,30 @@ function cleanKeyword(res, dirtyInput){
     return cleanInput;
 }
 
+function limitToPublicSchedules(schedules){
+    var limitedSchedules = []
+
+    //limit the info sent to client for each schedule
+    for(var i = 0; i < schedules.length; i++){
+        var tempSched = {
+            name: schedules[i].name,
+            lastModified: schedules[i].lastModified,
+            creatorName: schedules[i].creatorName,
+            courseCount: schedules[i].pairs.length
+        }
+        //add this limited info sched to schedules
+        limitedSchedules.push(tempSched);
+    }
+
+    //sort schedules by lastModified, starting with most recent schedule first
+    limitedSchedules.sort( (a,b) => new Date(b.lastModified) - new Date(a.lastModified));
+
+    //max the returned schedules to 10
+    limitedSchedules = limitedSchedules.splice(0,10);
+
+    return limitedSchedules;
+}
+
 
 exports.cleanCode = cleanCode;
 exports.cleanScheduleName = cleanScheduleName;
@@ -74,4 +98,5 @@ exports.cleanEmail = cleanEmail;
 exports.cleanPassword = cleanPassword;
 exports.cleanName = cleanName;
 exports.cleanKeyword = cleanKeyword;
+exports.limitToPublicSchedules = limitToPublicSchedules;
 

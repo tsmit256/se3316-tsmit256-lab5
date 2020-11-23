@@ -1,0 +1,21 @@
+<div class="contentClass">
+    <h2>Most Recent Public Schedules</h2>
+
+    <table class="tableResult">
+        <tr>
+            <th>Last Modified</th>
+            <th>Schedule Name</th>
+            <th>Creator Name</th>
+            <th>Course Count</th>
+        </tr>
+    
+        <tr *ngFor="let schedule of publicSchedules">
+            <td>{{schedule.lastModified | date:'long'}}</td>
+            <td>{{schedule.name}}</td>
+            <td>{{schedule.creatorName}}</td>
+            <td>{{schedule.courseCount}}</td>
+        </tr>
+    </table>
+</div>
+
+
