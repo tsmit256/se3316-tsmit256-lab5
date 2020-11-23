@@ -26,6 +26,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent},
   { path: 'verification/:link', component: AccntVerificationComponent},
   { path: 'keyword-search', component: KeywordSearchComponent},
+  { path: ':schedName/public-timetable-results', component: TimetableResultsComponent},
   { path: '**', redirectTo: '/subjects'}
 ];
 

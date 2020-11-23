@@ -312,7 +312,7 @@ app.route('/api/secure/schedules/:scheduleName')
 
 //Back-end functionality 6.
 //Get a list of subject code, course code pairs for a given schedule
-app.route('/api/open/schedules/:scheduleName')
+app.route('/api/secure/schedules/:scheduleName')
   .get((req,res) => {
     const name_dirty = req.params.scheduleName;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
@@ -333,7 +333,36 @@ app.route('/api/open/schedules/:scheduleName')
       .value()
 
     res.send(pairs);
-})
+});
+
+//Get a list of subject code, course code pairs for a public schedule
+app.route('/api/open/schedules/:scheduleName')
+  .get((req,res) => {
+    const name_dirty = req.params.scheduleName;
+    const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
+
+    const schedule = db.get('schedules')
+      .find({name: name_clean})
+      .value();
+
+    //If the schedule name does not exist send a 404 error
+    if(!schedule){
+        return res.status('404').send('A schedule with that name does not exist.');
+    }
+
+    //Need to ensure that this is a public schedule 
+    if(!schedule.public){
+        return res.status('403').send('This schedule is private');
+    }
+
+    //get the pairs for the specified scheduleName
+    const pairs = db.get('schedules')
+      .find({name: name_clean})
+      .get('pairs')
+      .value()
+
+    res.send(pairs);
+});
 
 //Back-end functionality 7.
 //Delete a schedule with a given name

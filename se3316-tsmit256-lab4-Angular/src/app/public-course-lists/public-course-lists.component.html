@@ -4,6 +4,7 @@
     <table class="tableResult">
         <tr>
             <th>Expand</th>
+            <th>Display</th>
             <th>Last Modified</th>
             <th>Schedule Name</th>
             <th>Creator Name</th>
@@ -13,7 +14,14 @@
         </tr>
     
         <tr *ngFor="let schedule of publicSchedules">
-            <td><button (click)="toggleExpand(schedule)">Toggle Expand</button></td>
+            <td>
+                <button (click)="toggleExpand(schedule)">Toggle Expand</button>
+            </td>
+            <td>
+                <nav>
+                    <a routerLink="/{{schedule.name}}/public-timetable-results">Get timetable data</a>
+                </nav>
+            </td>
             <td>{{schedule.lastModified | date:'medium'}}</td>
             <td>{{schedule.name}}</td>
             <td>{{schedule.creatorName}}</td>

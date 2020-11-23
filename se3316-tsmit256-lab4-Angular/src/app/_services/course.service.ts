@@ -104,11 +104,11 @@ export class CourseService {
     return courseComponents;
   }
 
-  getCoursesBySchedName(schedName: string){
+  getCoursesBySchedName(schedName: string, access = "secure"){
     let courses_total = [];
 
     //Get the pairs that are stored in the schedule
-    let result = this.getPairsBySchedName(schedName);
+    let result = this.getPairsBySchedName(schedName, access);
 
     if(result){
       result.subscribe(pairs => {
@@ -132,12 +132,18 @@ export class CourseService {
     return courses_total;
   }
 
-  getPairsBySchedName(schedName: string): Observable<Pair[]> {
+  //Public sched requests should access the api via 'open' instead of 'secure'
+  getCoursesByPublicSchedName(schedName: string){
+    return this.getCoursesBySchedName(schedName, "open");
+  }
+
+  getPairsBySchedName(schedName: string, access: string): Observable<Pair[]> {
     if (!this.validateService.isValidScheduleName(schedName)){
       return;
     }
 
-    const url = `api/schedules/${schedName}`;
+    //Access specifies whether it is requesting a public or private schedule (public=open, private=secure)
+    const url = `api/${access}/schedules/${schedName}`;
     var result = this.http.get<Pair[]>(url)
       .pipe(
         tap(_ => this.log(`fetched pairs schedName=${schedName}`)),

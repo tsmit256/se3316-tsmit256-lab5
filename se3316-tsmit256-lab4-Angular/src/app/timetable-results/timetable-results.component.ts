@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CourseService } from '../_services/course.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Course } from '../_models/course'
 
 @Component({
@@ -18,7 +18,8 @@ export class TimetableResultsComponent implements OnInit {
 
   constructor(    
     private route: ActivatedRoute,
-    private courseService: CourseService) { }
+    private courseService: CourseService,
+    private router: Router) { }
 
   ngOnInit(): void {
     this.courses = [];
@@ -71,7 +72,15 @@ export class TimetableResultsComponent implements OnInit {
 
   getCoursesFromSchedule(): void{
     this.schedName = this.route.snapshot.paramMap.get('schedName');
-    this.courses = this.courseService.getCoursesBySchedName(this.schedName);
+
+    //Check in url if it is a public schedule request
+    //Public sched requests should access the api via 'open' instead of 'secure'
+    if(/.*\/public-timetable-results$/.test(this.router.url)){
+      this.courses = this.courseService.getCoursesByPublicSchedName(this.schedName);
+    }
+    else{ //It is a private schedule request
+      this.courses = this.courseService.getCoursesBySchedName(this.schedName);
+    }
   }
 
   getCoursesFromKeyword(): void{
