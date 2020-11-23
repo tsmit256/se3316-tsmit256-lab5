@@ -76,7 +76,9 @@ function limitToPublicSchedules(schedules){
             name: schedules[i].name,
             lastModified: schedules[i].lastModified,
             creatorName: schedules[i].creatorName,
-            courseCount: schedules[i].pairs.length
+            courseCount: schedules[i].pairs.length,
+            pairs: schedules[i].pairs,
+            description: schedules[i].description
         }
         //add this limited info sched to schedules
         limitedSchedules.push(tempSched);

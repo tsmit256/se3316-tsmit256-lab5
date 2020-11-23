@@ -21,4 +21,5 @@ export interface PublicSchedule{
     lastModified: Date;
     creatorName: string;
     courseCount: number;
+    showDetail?: boolean;
 }

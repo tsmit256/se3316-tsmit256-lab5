@@ -201,13 +201,14 @@ app.route('/api/secure/schedules')
   .post((req, res) => {
     const name_dirty = req.body.name;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
-    
+
     const schedule = {
         name: name_clean,
         pairs: [],
         creatorName: "blank",
         lastModified: Date.now(),
-        public: true
+        public: true,
+        description: ""
     };
 
     const existingScheds = db.get('schedules').value();

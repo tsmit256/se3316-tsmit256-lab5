@@ -3,19 +3,34 @@
 
     <table class="tableResult">
         <tr>
+            <th>Expand</th>
             <th>Last Modified</th>
             <th>Schedule Name</th>
             <th>Creator Name</th>
             <th>Course Count</th>
+            <th>Description</th>
+            <th>Course IDs</th>
         </tr>
     
         <tr *ngFor="let schedule of publicSchedules">
-            <td>{{schedule.lastModified | date:'long'}}</td>
+            <td><button (click)="toggleExpand(schedule)">Toggle Expand</button></td>
+            <td>{{schedule.lastModified | date:'medium'}}</td>
             <td>{{schedule.name}}</td>
             <td>{{schedule.creatorName}}</td>
             <td>{{schedule.courseCount}}</td>
+            <td *ngIf="schedule.showDetail; else blankBlock">{{schedule.description}}</td>
+            <td *ngIf="schedule.showDetail; else blankBlock">
+                <p *ngFor="let pair of toArray(schedule.pairs)">
+                    {{pair.subjectCode}} {{pair.catalog_nbr}}
+                </p>
+            </td>
+            <ng-template #blankBlock>
+                <td>...</td>
+            </ng-template>
         </tr>
     </table>
+
+    
 </div>
 
 

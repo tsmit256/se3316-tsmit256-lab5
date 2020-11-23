@@ -23,11 +23,23 @@ export class PublicCourseListsComponent implements OnInit {
     if(result){
       result.subscribe(data => {
         this.publicSchedules = data;
-        console.log(this.publicSchedules);
+
+        //Set all showdetails to be false initially (only show glance at beginning)
+        for(let i=0; i<this.publicSchedules.length; i++){
+          this.publicSchedules[i].showDetail = false;
+        }
       });
     }
   }
 
+  toggleExpand(schedule){
+    schedule.showDetail = !schedule.showDetail;
+  }
+
+  //Pairs property is an object that must be converted to array before displaying in *ngFor loop
+  toArray(pairs){
+    return Object.keys(pairs).map(key => pairs[key])
+  }
 
 
 }
