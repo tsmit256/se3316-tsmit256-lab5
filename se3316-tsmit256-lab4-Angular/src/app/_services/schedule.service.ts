@@ -3,17 +3,16 @@ import { EMPTY, Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
 import { MessageService } from './message.service';
-import { PublicSchedule, Schedule, ScheduleCount } from '../_models/schedule';
+import { PublicSchedule, Schedule } from '../_models/schedule';
 import { ValidateService} from './validate.service'
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScheduleService {
-  scheduleCountsUrl = 'api/secure/scheduleCounts';
   schedulesUrl = 'api/secure/schedules';
   publicSchedsUrl = 'api/open/schedules';
-  tempScheduleCounts: ScheduleCount[];
+  tempSchedules: Schedule[];
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -24,17 +23,19 @@ export class ScheduleService {
     private messageService: MessageService,
     private validateService: ValidateService) { }
 
-  /** GET scheduleCounts from the server*/
-  getScheduleCounts(): Observable<ScheduleCount[]> {
-    return this.http.get<ScheduleCount[]>(this.scheduleCountsUrl)
+  /** GET schedules from the server*/
+  getSchedules(): Observable<Schedule[]> {
+    return this.http.get<Schedule[]>(this.schedulesUrl)
       .pipe(
-        tap(_ => this.log(`fetched scheduleCounts`)),
-        catchError(this.handleError<ScheduleCount[]>(`getScheduleCounts`, []))
+        tap(_ => this.log(`fetched schedules`)),
+        catchError(this.handleError<Schedule[]>(`getSchedules`, []))
       );
   }
 
   addSchedule(schedule: Schedule): Observable<Schedule> {
-    if (!this.validateService.isValidScheduleName(schedule.name)){
+    if (!this.validateService.isValidScheduleName(schedule.name) ||
+        !this.validateService.isValidSchedDescription(schedule.description) ||
+        !this.validateService.isValidBoolean(schedule.public)){
       return;
     }
     return this.http.post<Schedule>(this.schedulesUrl, schedule, this.httpOptions).pipe(
@@ -89,6 +90,19 @@ export class ScheduleService {
         tap(_ => this.log(`fetched public schedules`)),
         catchError(this.handleError<PublicSchedule[]>(`getPublicSchedules`, []))
       );
+  }
+
+  editSchedule(schedule: Schedule): Observable<Schedule> {
+    if (!this.validateService.isValidScheduleName(schedule.name) ||
+        !this.validateService.isValidSchedDescription(schedule.description) ||
+        !this.validateService.isValidBoolean(schedule.public)){
+      return;
+    }
+  
+    return this.http.put<Schedule>(this.schedulesUrl, schedule, this.httpOptions).pipe(
+      tap((schedule: Schedule) => this.log(`changed schedule w/ name=${schedule.name}`)),
+      catchError(this.handleError<Schedule>('editSchedule'))
+    );
   }
 
 

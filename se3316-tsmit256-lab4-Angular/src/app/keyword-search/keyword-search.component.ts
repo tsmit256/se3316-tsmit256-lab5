@@ -15,6 +15,7 @@ export class KeywordSearchComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit(): void {
+    //set validators for the keyword search form
     this.keywrdSrchForm = this.formBuilder.group({
       keyword: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(200)]],
     });

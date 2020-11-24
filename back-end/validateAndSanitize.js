@@ -93,6 +93,44 @@ function limitToPublicSchedules(schedules){
     return limitedSchedules;
 }
 
+function cleanSchedDescription(res, descr){
+    if(descr.length > 500){
+        return res.status('400').send('Description should be <= 500 characters');
+    }
+
+    const cleanInput = descr.replace(/<>/g, "");
+    return cleanInput;
+}
+
+function cleanBoolean(res, input){
+    //return if it is a boolean
+    if(typeof(input) === typeof(true)){
+        return input;
+    }
+
+    //otherwise return error
+    return res.status('400').send('The public indicator is not a boolean');
+}
+
+function cleanPairs(res, pairs){
+    var pair;
+    for(pair in pairs){
+        cleanCode(res, pairs[pair].subjectCode);
+        cleanCode(res, pairs[pair].catalog_nbr);
+    }
+    return pairs;
+}
+
+function cleanSchedId(res, input){
+    //ensure that schedId is a number
+    console.log(input);
+    if(typeof(input) === typeof(1) || input == 0){
+        return input;
+    }
+    return res.status('400').send("The schedId is not a valid schedId");
+}
+
+
 
 exports.cleanCode = cleanCode;
 exports.cleanScheduleName = cleanScheduleName;
@@ -101,4 +139,7 @@ exports.cleanPassword = cleanPassword;
 exports.cleanName = cleanName;
 exports.cleanKeyword = cleanKeyword;
 exports.limitToPublicSchedules = limitToPublicSchedules;
-
+exports.cleanSchedDescription = cleanSchedDescription;
+exports.cleanBoolean = cleanBoolean;
+exports.cleanPairs = cleanPairs;
+exports.cleanSchedId = cleanSchedId;

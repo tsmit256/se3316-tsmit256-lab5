@@ -1,0 +1,43 @@
+<div *ngIf="sched">
+    <h2>{{sched.name}} Editing Options</h2>
+
+    <form [formGroup]="editSchedForm" (ngSubmit)="editSched()">
+        <div class="form-group">
+            <label class="inputLabel" for="schedName">Schedule Name</label>
+            <input type="text" formControlName="schedName" class="form-control" [(ngModel)]="sched.name" [ngClass]="{ 'is-invalid': submitted && f.schedName.errors }" />
+            <div *ngIf="submitted && f.schedName.errors" class="invalid-feedback">
+                <div *ngIf="f.schedName.errors.required">Schedule name is required</div>
+                <div *ngIf="f.schedName.errors.maxlength">Schedule name should be no more than 50 characters</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="inputLabel" for="descr">Description</label>
+            <input type="text" formControlName="descr" class="form-control" [(ngModel)]="sched.description" placeholder="description" [ngClass]="{ 'is-invalid': submitted && f.descr.errors }" />
+            <div *ngIf="submitted && f.descr.errors" class="invalid-feedback">
+                <div *ngIf="f.descr.errors.maxlength">Description should be no more than 500 characters</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="inputLabel" for="publicBool">Make Public</label>
+            <input type="checkbox" formControlName="publicBool" class="form-control" [(ngModel)]="sched.public" [ngClass]="{ 'is-invalid': submitted && f.publicBool.errors }"/>
+        </div>
+        <div class="form-group">
+            <label class="inputLabel" for="deletePair">Delete A Pair</label>
+            <input type="text" formControlName="deletePair" class="form-control" placeholder="AA 1234B" [ngClass]="{ 'is-invalid': submitted && f.deletePair.errors }" />
+            <div *ngIf="submitted && f.deletePair.errors" class="invalid-feedback">
+                <div *ngIf="f.deletePair.errors.maxlength">Pair does not exist in this schedule</div>
+            </div>
+        </div>
+        <button class="btn btn-primary">
+            Save Changes
+        </button>
+        <div *ngIf="editError" class="alert alert-danger mt-3 mb-0">{{editError}}</div>
+    </form>
+
+    <div *ngIf="sched.pairs.length">
+        <h4>Current Pairs:</h4>
+        <p *ngFor="let pair of sched.pairs">
+            {{pair.subjectCode}} {{pair.catalog_nbr}}
+        </p>
+    </div>
+  </div>

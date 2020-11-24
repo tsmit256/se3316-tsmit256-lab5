@@ -77,6 +77,8 @@ app.use('/api/secure', (req, res, next) => {
 
         if(payload.role != 'regular')
             return res.status(401).send('You do not have access to this page');
+        
+        req.user = payload;
     }
     catch(e){
         return res.status(401).send('Your session has expired');
@@ -189,29 +191,38 @@ app.get('/api/open/schedules', (req, res) => {
 });
 
 
-//The 'secure' allows access to user-specific schedules
-app.get('/api/secure/schedules', (req,res) => {
-    const schedules = db.get('schedules').value();
-    res.send(schedules);
-});
 
-//Back-end functionality 4
-//Create a new schedule with a given schedule name
+
 app.route('/api/secure/schedules')
+   //The 'secure' allows access to user-specific schedules
+  .get((req,res) => {
+        const schedules = db.get('schedules').filter({creatorId: req.user.id}).value();
+        res.send(schedules);
+   })
+
+    //Create a new schedule with a given schedule name
   .post((req, res) => {
     const name_dirty = req.body.name;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
+    const descr_dirty = req.body.description;
+    const descr_clean = validateAndSanitize.cleanSchedDescription(res, descr_dirty);
+    const public_dirty = req.body.public;
+    const public_clean = validateAndSanitize.cleanBoolean(res, public_dirty)
+
+    const existingScheds = db.get('schedules').value();
 
     const schedule = {
         name: name_clean,
+        schedId: existingScheds.length,
         pairs: [],
-        creatorName: "blank",
+        creatorName: req.user.name,
+        creatorId: req.user.id,
         lastModified: Date.now(),
-        public: true,
-        description: ""
+        public: public_clean,
+        description: descr_clean
     };
 
-    const existingScheds = db.get('schedules').value();
+    
 
     //Check if the schedule name already exists
     for(var i in existingScheds){
@@ -227,17 +238,55 @@ app.route('/api/secure/schedules')
     res.send(schedule); //send back the object to the client
 })
 
-//Back-end functionality 9.
-//Delete all schedules
-  .delete((req,res) => {
-    const schedules = db.get('schedules')
-    .value();
+//Used to update changes to a schedule
+  .put((req,res) => {
+    const schedId_dirty = req.body.schedId;
+    const schedId_clean = validateAndSanitize.cleanSchedId(res, schedId_dirty);
+    const name_dirty = req.body.name;
+    const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
+    const descr_dirty = req.body.description;
+    const descr_clean = validateAndSanitize.cleanSchedDescription(res, descr_dirty);
+    const public_dirty = req.body.public;
+    const public_clean = validateAndSanitize.cleanBoolean(res, public_dirty);
+    const pairs_dirty = req.body.pairs;
+    const pairs_clean = validateAndSanitize.cleanPairs(res, pairs_dirty);
+    
+    const oldSched = db.get('schedules').find({schedId: schedId_clean}).value();
 
-    for(var i=schedules.length-1; i >= 0; i--){
-        db.get('schedules').remove({name: schedules[i].name}).write();
-    }    
+    //Only allow user to access schedules that they made
+    if(req.user.id != oldSched.creatorId){
+        return res.status('401').send('This is a private schedule that you did not create');
+    }
 
-    res.send(schedules);
+    const schedule = {
+        name: name_clean,
+        schedId: schedId_clean,
+        pairs: pairs_clean,
+        creatorName: req.user.name,
+        creatorId: req.user.id,
+        lastModified: Date.now(),
+        public: public_clean,
+        description: descr_clean
+    };
+
+    const existingScheds = db.get('schedules').value();
+
+    //Ensure that new name does not already exist
+    for(var i in existingScheds){
+        if(existingScheds[i].name == schedule.name && existingScheds[i].schedId != schedule.schedId){ //If a schedule with that name already exists in the database
+            return res.status('400').send('Another schedule with that new name already exists.');
+        }
+    }
+
+    //Delete the old schedule
+    db.get('schedules').remove({schedId: schedId_clean}).write();
+
+    //Add the new schedule
+    db.get('schedules')
+      .push(schedule)
+      .write();
+
+    res.send(schedule); //send back the object to the client
 });
 
 
@@ -308,11 +357,10 @@ app.route('/api/secure/schedules/:scheduleName')
       .write();
 
     res.send(schedule);    
-});
+})
 
 //Back-end functionality 6.
 //Get a list of subject code, course code pairs for a given schedule
-app.route('/api/secure/schedules/:scheduleName')
   .get((req,res) => {
     const name_dirty = req.params.scheduleName;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
@@ -326,6 +374,11 @@ app.route('/api/secure/schedules/:scheduleName')
         return res.status('404').send('A schedule with that name does not exist.');
     }
 
+    //Only allow user to access schedules that they made
+    if(req.user.id != schedule.creatorId){
+        return res.status('401').send('This is a private schedule that you did not create');
+    }
+
     //get the pairs for the specified scheduleName
     const pairs = db.get('schedules')
       .find({name: name_clean})
@@ -333,6 +386,28 @@ app.route('/api/secure/schedules/:scheduleName')
       .value()
 
     res.send(pairs);
+})
+
+//Delete a schedule with a given name
+.delete((req,res) => {
+    const name_dirty = req.params.scheduleName;
+    const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
+
+    const schedule = db.get('schedules')
+      .find({name: name_clean})
+      .filter({creatorId: req.user.id}) //only search schedules that this user created
+      .value();
+
+    //If the schedule name does not exist send a 404 error
+    if(!schedule){
+        return res.status('404').send('A schedule that you made does not exist with that name.');
+    }
+
+    db.get('schedules')
+    .remove({name: name_clean})
+    .write();
+
+    res.send(schedule);
 });
 
 //Get a list of subject code, course code pairs for a public schedule
@@ -364,45 +439,9 @@ app.route('/api/open/schedules/:scheduleName')
     res.send(pairs);
 });
 
-//Back-end functionality 7.
-//Delete a schedule with a given name
-app.route('/api/secure/schedules/:scheduleName')
-  .delete((req,res) => {
-    const name_dirty = req.params.scheduleName;
-    const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
-
-    const schedule = db.get('schedules')
-      .find({name: name_clean})
-      .value();
-
-    //If the schedule name does not exist send a 404 error
-    if(!schedule){
-        return res.status('404').send('A schedule with that name does not exist.');
-    }
-
-    db.get('schedules')
-    .remove({name: name_clean})
-    .write();
-
-    res.send(schedule);
-});
 
 
-//Back-end functionality 8.
-//Get a list of schedule names and number of courses that are saved in each schedule
-app.get('/api/secure/scheduleCounts', (req,res) => {
-    //Get the existing schedules
-    const schedules = db.get('schedules')
-    .value();
 
-    const scheduleCourseCounts = []; //used to keep track of list of names and number of courses in each
-
-    for(var sched in schedules){
-        scheduleCourseCounts.push( { name: schedules[sched].name, courseCount: schedules[sched].pairs.length } );
-    }
-
-    res.send(scheduleCourseCounts);
-});
 
 
 //User Authentication

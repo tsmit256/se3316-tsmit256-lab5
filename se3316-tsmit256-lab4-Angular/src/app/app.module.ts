@@ -19,6 +19,7 @@ import { AccntVerificationComponent } from './accnt-verification/accnt-verificat
 import { GoogleLoginProvider, SocialAuthService, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
 import { KeywordSearchComponent } from './keyword-search/keyword-search.component';
 import { PublicCourseListsComponent } from './public-course-lists/public-course-lists.component';
+import { SchedDetailComponent } from './sched-detail/sched-detail.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { PublicCourseListsComponent } from './public-course-lists/public-course-
     AccntVerificationComponent,
     KeywordSearchComponent,
     PublicCourseListsComponent,
+    SchedDetailComponent,
   ],
   imports: [
     BrowserModule,

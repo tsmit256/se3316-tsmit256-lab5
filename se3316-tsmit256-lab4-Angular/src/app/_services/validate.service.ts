@@ -94,6 +94,30 @@ export class ValidateService {
     }
     
     return true;
-  } 
+  }
+  
+  isValidSchedDescription(descr: string){
+    if(descr.length > 500){
+      alert('Description should be <= 500 characters')  
+      return false;
+    }
+
+    if(/<>/.test(descr)){
+      alert('Please remove <> characters from name');
+      return false;
+    }
+    return true;
+  }
+
+  isValidBoolean(input){
+    //return if it is a boolean
+    if(typeof(input) === typeof(true)){
+        return true;
+    }
+
+    //otherwise return error
+    alert('The public flag should be a boolean');
+    return false;
+  }
 
 }

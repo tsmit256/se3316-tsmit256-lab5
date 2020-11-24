@@ -1,41 +1,59 @@
 <h2>Create Schedule</h2>
+
 <div>
-    <label>New schedule name:
-      <input #scheduleName />
-    </label>
-    <!-- (click) passes input value to add() and then clears the input -->
-    <button (click)="add(scheduleName.value); scheduleName.value=''">
-      add
-    </button>
+  <form [formGroup]="createSchedForm" (ngSubmit)="add()">
+      <div class="form-group">
+          <label class="inputLabel" for="schedName">New Schedule Name</label>
+          <input type="text" formControlName="schedName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.schedName.errors }" />
+          <div *ngIf="submitted && f.schedName.errors" class="invalid-feedback">
+              <div *ngIf="f.schedName.errors.required">Schedule name is required</div>
+              <div *ngIf="f.schedName.errors.maxlength">Schedule name should be no more than 50 characters</div>
+          </div>
+      </div>
+      <div class="form-group">
+          <label class="inputLabel" for="descr">Description</label>
+          <input type="text" formControlName="descr" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.descr.errors }" />
+          <div *ngIf="submitted && f.descr.errors" class="invalid-feedback">
+              <div *ngIf="f.descr.errors.maxlength">Description should be no more than 500 characters</div>
+          </div>
+      </div>
+      <div class="form-group">
+          <label class="inputLabel" for="publicBool">Make Public</label>
+          <input type="checkbox" formControlName="publicBool" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.publicBool.errors }"/>
+      </div>
+      <button class="btn btn-primary">
+          Add
+      </button>
+      <div *ngIf="createError" class="alert alert-danger mt-3 mb-0">{{createError}}</div>
+  </form>
 </div>
 
 
 <h2>Your Schedules</h2>
-<p *ngIf="fromSavePairAction === false && scheduleNamesAndCounts.length">Click a schedule to see options</p>
-<p *ngIf="fromSavePairAction === true && scheduleNamesAndCounts.length">Click a schedule to save {{subjectCode}} {{courseCode}} pair</p>
-<p *ngIf="scheduleNamesAndCounts.length == 0">You have no schedules. Create one above!</p>
+<p *ngIf="fromSavePairAction === false && schedules.length">Click a schedule to see options</p>
+<p *ngIf="fromSavePairAction === true && schedules.length">Click a schedule to save {{subjectCode}} {{courseCode}} pair</p>
+<p *ngIf="schedules.length == 0">You have no schedules. Create one above!</p>
 <ul class="schedules">
   <!--If statement has else statement below-->
   <ng-container *ngIf="fromSavePairAction === false">
-    <li *ngFor="let schedule of scheduleNamesAndCounts">
+    <li *ngFor="let schedule of schedules">
         <div class="scheduleDiv"
             [class.selected]="schedule === selectedSchedule"
             (click)="onSelect(schedule)">
-            <span class="badge">~</span>{{schedule.name}}, <i>{{schedule.courseCount}} pair(s) saved</i>
+            <span class="badge">~</span>{{schedule.name}}, <i>{{schedule.pairs.length}} pair(s) saved</i>
         </div>
         
 
         <div *ngIf="selectedSchedule === schedule" class="optionsForSelectedSched">
 
             <nav>
-                
-                <a routerLink="/{{schedule.name}}/timetable-results">Load Schedule</a>
+                <a routerLink="/{{schedule.name}}/timetable-results">Load Timetable Results</a>
                 <p></p>           
-                <a (click)="delete(schedule)">Delete Schedule</a>
+                <a (click)="deleteConfirm = true">Delete Schedule</a>
                 <p></p>
-                <a (click)="deleteAllSchedules()">Delete All Schedules</a>
-                
-            </nav>
+                <a *ngIf="deleteConfirm" (click)="delete(schedule)">Confirm </a>
+                <a *ngIf="deleteConfirm" (click)="deleteConfirm = false"> Cancel</a>
+            </nav>    
         
         </div>
     </li>
@@ -43,11 +61,16 @@
 
   <!--This is the 'else' of the ngIf statement in the li element above-->
   <ng-container *ngIf="fromSavePairAction === true">
-    <li *ngFor="let schedule of scheduleNamesAndCounts">
+    <li *ngFor="let schedule of schedules">
         <div class="scheduleDiv"
             (click)="savePairToSched(schedule.name)">
-            <span class="badge">~</span>{{schedule.name}}, <i>{{schedule.courseCount}} pair(s) saved</i>
+            <span class="badge">~</span>{{schedule.name}}, <i>{{schedule.pairs.length}} pair(s) saved</i>
         </div>
     </li>
   </ng-container>
+
 </ul>
+
+<div *ngIf="selectedSchedule">
+  <app-sched-detail [sched]="selectedSchedule"></app-sched-detail> 
+</div>
