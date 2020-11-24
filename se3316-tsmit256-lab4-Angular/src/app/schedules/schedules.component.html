@@ -1,7 +1,6 @@
-<h2>Create Schedule</h2>
-
-<div>
-  <form [formGroup]="createSchedForm" (ngSubmit)="add()">
+<div class="contentClass">
+    <h2>Create Schedule</h2>
+    <form [formGroup]="createSchedForm" (ngSubmit)="add()">
       <div class="form-group">
           <label class="inputLabel" for="schedName">New Schedule Name</label>
           <input type="text" formControlName="schedName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.schedName.errors }" />
@@ -25,10 +24,10 @@
           Add
       </button>
       <div *ngIf="createError" class="alert alert-danger mt-3 mb-0">{{createError}}</div>
-  </form>
+    </form>
 </div>
 
-
+<div class="contentClass2">
 <h2>Your Schedules</h2>
 <p *ngIf="fromSavePairAction === false && schedules.length">Click a schedule to see options</p>
 <p *ngIf="fromSavePairAction === true && schedules.length">Click a schedule to save {{subjectCode}} {{courseCode}} pair</p>
@@ -70,7 +69,10 @@
   </ng-container>
 
 </ul>
+</div>
 
 <div *ngIf="selectedSchedule">
   <app-sched-detail [sched]="selectedSchedule"></app-sched-detail> 
 </div>
+
+<app-public-course-lists></app-public-course-lists>

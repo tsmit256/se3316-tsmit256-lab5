@@ -53,6 +53,17 @@ app.use('/api/open/users', (req,res,next) => { //for routes anything to do with 
 
 app.use('/', express.static('../se3316-tsmit256-lab4-Angular/dist/se3316-tsmit256-lab4-Angular')); //used to serve front-end static files from static folder
 
+//for all routes related to reviews
+app.use('/api/secure/reviews', (req,res,next) => {
+    var test = db.get('reviews').value();
+
+    if(!test){ //If the reviews component of the database doesn't exist, then create default
+        db.defaults({ reviews: []}).write(); //Add default reviews array
+    }
+
+    next(); //keep going
+})
+
 
 //Make sure there is a valid token for any request trying to access secured content
 app.use('/api/secure', (req, res, next) => {
@@ -227,8 +238,6 @@ app.route('/api/secure/schedules')
         public: public_clean,
         description: descr_clean
     };
-
-    
 
     //Check if the schedule name already exists
     for(var i in existingScheds){
@@ -627,6 +636,56 @@ app.post('/api/open/users/verification', (req, res) => {
 
     res.send(newUser);
 });
+
+
+
+app.route('/api/secure/reviews/:subjectCode/:courseCode')
+  //Get the reviews related to a pair
+  .get((req,res) => {
+    const courseCode_dirty = req.params.courseCode;
+    const courseCode_clean = validateAndSanitize.cleanCode(res,courseCode_dirty);
+    
+    const subjectCode_dirty = req.params.subjectCode;
+    const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
+
+    //specify how to filter the database of reviews
+    let filterCriteria = {
+        subjectCode: subjectCode_clean,
+        catalog_nbr: courseCode_clean
+    }
+
+    //get reviews related to pair
+    const reviews = db.get('reviews').filter({pair: filterCriteria}).value();
+
+    res.send(reviews);
+  })
+  //Post a new review about a particular pair
+  .post((req, res) => {
+    const courseCode_dirty = req.params.courseCode;
+    const courseCode_clean = validateAndSanitize.cleanCode(res,courseCode_dirty);
+    
+    const subjectCode_dirty = req.params.subjectCode;
+    const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
+
+    const message_dirty = req.body.message;
+    const message_clean = validateAndSanitize.cleanReviewDescription(res, message_dirty);
+
+    const review = {
+        message: message_clean,
+        lastModified: Date.now(),
+        creatorName: req.user.name,
+        pair: {
+            subjectCode: subjectCode_clean,
+            catalog_nbr: courseCode_clean
+        }
+    }
+
+    db.get('reviews')
+    .push(review)
+    .write(); 
+    
+    res.send(review);
+  });
 
 
 

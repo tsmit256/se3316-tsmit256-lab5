@@ -7,7 +7,7 @@ export interface Schedule{
     }>
     lastModified?: Date;
     creatorName?: string;
-    creatorId: string;
+    creatorId: number;
     description?: string
     public: boolean;
 } 

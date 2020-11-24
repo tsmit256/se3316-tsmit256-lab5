@@ -9,7 +9,7 @@
     cursor: pointer;
     position: relative;
     left: 0;
-    background-color: #EEE;
+    background-color: rgb(182, 174, 174);
     margin: .5em;
     padding: .3em .3em .3em 0em;
     height: 1.6em;
@@ -55,3 +55,17 @@
   .schedules a:hover {
     color:#607D8B;
   }
+
+  .contentClass, .contentClass2 {
+    position: relative;
+    left: 0;
+    background-color: #EEE;
+    margin: 1em;
+    padding: 1em;
+    border-radius: 4px;
+}
+.contentClass:hover {
+    color: #607D8B;
+    background-color: #DDD;
+    left: .1em;
+}

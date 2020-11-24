@@ -130,6 +130,16 @@ function cleanSchedId(res, input){
     return res.status('400').send("The schedId is not a valid schedId");
 }
 
+function cleanReviewDescription(res, descr){
+    if(descr.length > 500 || descr.length < 1){
+        return res.status('400').send('Description should be <= 500 and >= 1 characters');
+    }
+
+    const cleanInput = descr.replace(/<>/g, "");
+    return cleanInput;
+}
+
+
 
 
 exports.cleanCode = cleanCode;
@@ -143,3 +153,4 @@ exports.cleanSchedDescription = cleanSchedDescription;
 exports.cleanBoolean = cleanBoolean;
 exports.cleanPairs = cleanPairs;
 exports.cleanSchedId = cleanSchedId;
+exports.cleanReviewDescription = cleanReviewDescription;

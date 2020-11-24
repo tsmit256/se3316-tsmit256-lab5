@@ -20,6 +20,7 @@ import { GoogleLoginProvider, SocialAuthService, SocialAuthServiceConfig, Social
 import { KeywordSearchComponent } from './keyword-search/keyword-search.component';
 import { PublicCourseListsComponent } from './public-course-lists/public-course-lists.component';
 import { SchedDetailComponent } from './sched-detail/sched-detail.component';
+import { CourseReviewComponent } from './course-review/course-review.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { SchedDetailComponent } from './sched-detail/sched-detail.component';
     KeywordSearchComponent,
     PublicCourseListsComponent,
     SchedDetailComponent,
+    CourseReviewComponent,
   ],
   imports: [
     BrowserModule,

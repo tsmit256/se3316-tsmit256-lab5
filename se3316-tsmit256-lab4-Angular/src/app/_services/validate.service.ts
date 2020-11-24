@@ -89,7 +89,7 @@ export class ValidateService {
         return false;
     }
     if(/[<>]/.test(name)){
-        alert('Please remove <> and [] characters from name');
+        alert('Please remove <> and [] characters from keyword');
         return false;
     }
     
@@ -103,7 +103,7 @@ export class ValidateService {
     }
 
     if(/<>/.test(descr)){
-      alert('Please remove <> characters from name');
+      alert('Please remove <> characters from description');
       return false;
     }
     return true;
@@ -118,6 +118,19 @@ export class ValidateService {
     //otherwise return error
     alert('The public flag should be a boolean');
     return false;
+  }
+
+  isValidReviewDescription(descr: string){
+    if(descr.length > 500 || descr.length < 1){
+      alert('Description should be <= 500 and >= 1 characters')  
+      return false;
+    }
+
+    if(/<>/.test(descr)){
+      alert('Please remove <> characters from review message');
+      return false;
+    }
+    return true;
   }
 
 }

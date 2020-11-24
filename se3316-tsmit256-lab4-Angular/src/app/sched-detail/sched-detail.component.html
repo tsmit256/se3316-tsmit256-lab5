@@ -1,4 +1,4 @@
-<div *ngIf="sched">
+<div *ngIf="sched" class="contentClass">
     <h2>{{sched.name}} Editing Options</h2>
 
     <form [formGroup]="editSchedForm" (ngSubmit)="editSched()">
