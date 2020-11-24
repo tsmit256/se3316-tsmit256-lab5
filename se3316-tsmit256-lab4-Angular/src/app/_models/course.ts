@@ -1,3 +1,5 @@
+import { CourseReview } from './courseReview';
+
 export interface Course{
     catalog_nbr: string;
     subject: string;
@@ -19,4 +21,5 @@ export interface Course{
       }>
     catalog_description: string;
     showDetail?: boolean;
+    reviews: CourseReview[];
   }

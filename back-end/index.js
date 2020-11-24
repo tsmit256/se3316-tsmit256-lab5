@@ -123,11 +123,15 @@ app.get('/api/open/courses/:subjectCode', (req,res) => {
     const subjectCode_dirty = req.params.subjectCode;
     const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
     //Extract object with the specific subjectCode
-    const courses = parseCourseDataFile.extractCoursesBySubject(subjectCode_clean);
+    var courses = parseCourseDataFile.extractCoursesBySubject(subjectCode_clean);
 
     if(!courses){ //subject will be false if not found by parsing function above.
         return res.status('404').send('The subject code was not found.');
     }
+
+    //append reviews to courses
+    courses = retrieveReviewsFromDb(courses);
+
     res.send(courses);
 });
 
@@ -143,11 +147,15 @@ app.get('/api/open/courses/:subjectCode/:courseCode', (req,res) => {
     const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
 
     //Extract object with the specific subjectCode and courseCode
-    const course = parseCourseDataFile.extractCoursesByCatalogNbr(subjectCode_clean, courseCode_clean);
+    var course = parseCourseDataFile.extractCoursesByCatalogNbr(subjectCode_clean, courseCode_clean);
 
     if(!course){
         return res.status('404').send('The combination of course code and subject code was not found.');
     }
+
+    //append reviews to course
+    course = retrieveReviewsFromDb(course);
+
     res.send(course);
 });
 
@@ -166,11 +174,15 @@ app.get('/api/open/courses/:subjectCode/:courseCode/:component', (req,res) => {
     const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
 
     //Extract object with specific subjectCode, courseCode, and component
-    const course = parseCourseDataFile.extractCoursesByComponent(subjectCode_clean, courseCode_clean, component_clean);
+    var course = parseCourseDataFile.extractCoursesByComponent(subjectCode_clean, courseCode_clean, component_clean);
 
     if(!course){
         return res.status('404').send('The combination of course code, subject code, and component was not found.');
     }
+
+    //append reviews to course
+    course = retrieveReviewsFromDb(course);
+
     res.send(course);
 });
 
@@ -181,13 +193,16 @@ app.get('/api/open/keyword/courses/:keyword', (req,res) => {
     const keyword_clean = validateAndSanitize.cleanKeyword(res, keyword_dirty);
 
     //Extract object with specific keyword in either 
-    const courses = parseCourseDataFile.extractCoursesByKeyword(keyword_clean);
+    var courses = parseCourseDataFile.extractCoursesByKeyword(keyword_clean);
 
     if(!courses){ //courses will be false if not found by parsing function above.
         return res.status('404').send('This keyword has no similar courseCodes or classNames.');
     }
-    res.send(courses);
 
+    //append reviews to courses
+    courses = retrieveReviewsFromDb(courses);
+
+    res.send(courses);
 });
 
 //The 'open' allows only access to public schedules
@@ -456,9 +471,6 @@ app.route('/api/open/schedules/:scheduleName')
 
 
 
-
-
-
 //User Authentication
 app.post('/api/open/users/authenticate', (req,res) => {
     const email_dirty = req.body.email;
@@ -640,25 +652,6 @@ app.post('/api/open/users/verification', (req, res) => {
 
 
 app.route('/api/secure/reviews/:subjectCode/:courseCode')
-  //Get the reviews related to a pair
-  .get((req,res) => {
-    const courseCode_dirty = req.params.courseCode;
-    const courseCode_clean = validateAndSanitize.cleanCode(res,courseCode_dirty);
-    
-    const subjectCode_dirty = req.params.subjectCode;
-    const subjectCode_clean = validateAndSanitize.cleanCode(res,subjectCode_dirty);
-
-    //specify how to filter the database of reviews
-    let filterCriteria = {
-        subjectCode: subjectCode_clean,
-        catalog_nbr: courseCode_clean
-    }
-
-    //get reviews related to pair
-    const reviews = db.get('reviews').filter({pair: filterCriteria}).value();
-
-    res.send(reviews);
-  })
   //Post a new review about a particular pair
   .post((req, res) => {
     const courseCode_dirty = req.params.courseCode;
@@ -726,4 +719,24 @@ app.listen(port, () => {
 
  function comparePasswords(password2, hash){
      return bcrypt.compareSync(password2, hash);
+ }
+
+ function retrieveReviewsFromDb(courses){
+
+    //iterate through each course in courses
+    for(var c in courses){
+        //specify how to filter the database of reviews
+        let filterCriteria = {
+            subjectCode: courses[c].subject,
+            catalog_nbr: courses[c].catalog_nbr
+        }
+
+        //get reviews related to pair
+        var reviews = db.get('reviews').filter({pair: filterCriteria}).value();
+        
+        //append reviews to course
+        courses[c].reviews = reviews;
+    }
+    console.log(courses);
+    return courses;
  }

@@ -52,3 +52,16 @@
     color: white;
     padding: 10px;
 }
+
+.reviewText {
+    font-weight: 400;
+}
+
+.review {
+    cursor: text;
+    background-color: white;
+    margin: .1em;
+    padding: .5em;
+    border-radius: 4px;
+    display: inline-block;
+  }

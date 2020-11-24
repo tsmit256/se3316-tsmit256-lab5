@@ -1,12 +1,3 @@
-<div>
-    <h2>{{subjectCode}} {{courseCode}} Course Reviews</h2>
-    <div *ngFor="let review of reviews" class="contentClass">
-        <p>Created by {{review.creatorName}} on {{review.lastModified | date:'medium'}}</p>
-        <p>{{review.message}}</p>
-
-    </div>
-</div>
-
 <div class="contentClass">
     <h2>Create A Review</h2>
     <form [formGroup]="createReviewForm" (ngSubmit)="addReview()">

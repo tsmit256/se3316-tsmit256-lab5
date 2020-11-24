@@ -43,5 +43,12 @@
             </ng-template>
         </tr>
     </table>
+
+    <div *ngIf="course.showDetail">
+      <h2>Reviews</h2>
+      <div *ngFor="let review of course.reviews" class="review">
+          <h4>{{review.creatorName}} on {{review.lastModified | date:'medium'}}: <span class="reviewText">{{review.message}}</span></h4>
+      </div>
+    </div>
   </li>
 </ul>

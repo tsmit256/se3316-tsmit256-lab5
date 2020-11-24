@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { CourseReview } from '../_models/courseReview';
 import { Pair } from '../_models/schedule';
 import { ReviewService } from '../_services/review.service';
 
@@ -11,10 +10,10 @@ import { ReviewService } from '../_services/review.service';
   styleUrls: ['./course-review.component.css']
 })
 export class CourseReviewComponent implements OnInit {
-  reviews: CourseReview[];
   courseCode = "";
   subjectCode = "";
   createReviewForm: FormGroup;
+  submitted = false;
 
   constructor(private reviewService: ReviewService,
               private route: ActivatedRoute,
@@ -26,28 +25,19 @@ export class CourseReviewComponent implements OnInit {
       message: ['', [Validators.required, Validators.maxLength(500)]]
     });
 
-    this.reviews = [];
-    this.getReviews();
   }
 
   // convenience getter for easy access to form fields
   get f() { return this.createReviewForm.controls; }
 
-  getReviews(){
-    this.courseCode = this.route.snapshot.paramMap.get('courseCode');
-    this.subjectCode = this.route.snapshot.paramMap.get('subjectCode');
-
-    let result = this.reviewService.getReviews({subjectCode: this.subjectCode, catalog_nbr: this.courseCode} as Pair);
-
-    if(result){
-      result.subscribe(
-        data => {
-        this.reviews = data;
-        });
-    }
-  }
-
   addReview(){
+    this.submitted = true;
+
+    // stop here if form is invalid
+    if (this.createReviewForm.invalid) {
+      return;
+    }
+
     //get the message from input
     let message = this.f.message.value;
 
@@ -58,7 +48,7 @@ export class CourseReviewComponent implements OnInit {
 
     if(result){
       result.subscribe(
-        data => {alert("Review Added!")
+        data => {alert("Review Added!");
       },
       error => {
         alert(error);
