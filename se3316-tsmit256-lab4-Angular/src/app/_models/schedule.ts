@@ -10,6 +10,7 @@ export interface Schedule{
     creatorId: number;
     description?: string
     public: boolean;
+    showDetail?: boolean;
 } 
 
 export interface Pair{

@@ -69,3 +69,24 @@
     background-color: #DDD;
     left: .1em;
 }
+
+.tableResult{
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.tableResult td, th{
+  border: 1px solid black;
+}
+
+.tableResult td{
+  padding: 5px;
+  background-color: rgb(216, 216, 216);
+}
+
+.tableResult th{
+  text-align: left;
+  background-color: gray;
+  color: white;
+  padding: 10px;
+}

@@ -27,52 +27,68 @@
     </form>
 </div>
 
-<div class="contentClass2">
-<h2>Your Schedules</h2>
-<p *ngIf="fromSavePairAction === false && schedules.length">Click a schedule to see options</p>
-<p *ngIf="fromSavePairAction === true && schedules.length">Click a schedule to save {{subjectCode}} {{courseCode}} pair</p>
-<p *ngIf="schedules.length == 0">You have no schedules. Create one above!</p>
-<ul class="schedules">
-  <!--If statement has else statement below-->
-  <ng-container *ngIf="fromSavePairAction === false">
-    <li *ngFor="let schedule of schedules">
-        <div class="scheduleDiv"
-            [class.selected]="schedule === selectedSchedule"
-            (click)="onSelect(schedule)">
-            <span class="badge">~</span>{{schedule.name}}, <i>{{schedule.pairs.length}} pair(s) saved</i>
-        </div>
-        
-
-        <div *ngIf="selectedSchedule === schedule" class="optionsForSelectedSched">
-
-            <nav>
-                <a routerLink="/{{schedule.name}}/timetable-results">Load Timetable Results</a>
-                <p></p>           
-                <a (click)="deleteConfirm = true">Delete Schedule</a>
+<!--Display the private course lists-->
+<div class="contentClass">
+    <h2>Your Schedules</h2>
+    <p *ngIf="fromSavePairAction === true && schedules.length">Click a schedule to save {{subjectCode}} {{courseCode}} pair</p>
+    <p *ngIf="schedules.length == 0">You have no schedules. Create one above!</p>
+    <table *ngIf="schedules.length" class="tableResult">
+        <tr>
+            <th *ngIf="fromSavePairAction === true">Save Pair To Schedule</th>
+            <th>Expand</th>
+            <th>Delete</th>
+            <th>Edit</th>
+            <th>Display</th>
+            <th>Last Modified</th>
+            <th>Schedule Name</th>
+            <th>Creator Name</th>
+            <th>Course Count</th>
+            <th>Description</th>
+            <th>Course IDs</th>
+        </tr>
+    
+        <tr *ngFor="let schedule of schedules">
+            <td *ngIf="fromSavePairAction === true">
+                <button (click)="savePairToSched(schedule.name)">Save To This Schedule</button>
+            </td>
+            <td>
+                <button (click)="toggleExpand(schedule)">Toggle Expand</button>
+            </td>
+            <td>
+                <button *ngIf="!deleteConfirm" (click)="deleteConfirm = true">Delete</button>
                 <p></p>
-                <a *ngIf="deleteConfirm" (click)="delete(schedule)">Confirm </a>
-                <a *ngIf="deleteConfirm" (click)="deleteConfirm = false"> Cancel</a>
-            </nav>    
-        
-        </div>
-    </li>
-  </ng-container>
-
-  <!--This is the 'else' of the ngIf statement in the li element above-->
-  <ng-container *ngIf="fromSavePairAction === true">
-    <li *ngFor="let schedule of schedules">
-        <div class="scheduleDiv"
-            (click)="savePairToSched(schedule.name)">
-            <span class="badge">~</span>{{schedule.name}}, <i>{{schedule.pairs.length}} pair(s) saved</i>
-        </div>
-    </li>
-  </ng-container>
-
-</ul>
+                <button *ngIf="deleteConfirm" (click)="delete(schedule)">Confirm </button>
+                <button *ngIf="deleteConfirm" (click)="deleteConfirm = false"> Cancel</button>
+            </td>
+            <td>
+                <button  [class.selected]="schedule === selectedSchedule" (click)="onSelect(schedule)">Edit</button>
+            </td>
+            <td>
+                <nav>
+                    <a routerLink="/{{schedule.name}}/timetable-results">Get timetable data</a>
+                </nav>
+            </td>
+            <td>{{schedule.lastModified | date:'medium'}}</td>
+            <td>{{schedule.name}}</td>
+            <td>{{schedule.creatorName}}</td>
+            <td>{{schedule.pairs.length}}</td>
+            <td *ngIf="schedule.showDetail; else blankBlock">{{schedule.description}}</td>
+            <td *ngIf="schedule.showDetail; else blankBlock">
+                <p *ngFor="let pair of toArray(schedule.pairs)">
+                    {{pair.subjectCode}} {{pair.catalog_nbr}}
+                </p>
+            </td>
+            <ng-template #blankBlock>
+                <td>...</td>
+            </ng-template>
+        </tr>
+    </table>
+    
 </div>
 
 <div *ngIf="selectedSchedule">
-  <app-sched-detail [sched]="selectedSchedule"></app-sched-detail> 
+    <app-sched-detail [sched]="selectedSchedule"></app-sched-detail> 
 </div>
 
+<!--Display the public course lists as well-->
 <app-public-course-lists></app-public-course-lists>

@@ -53,17 +53,6 @@ app.use('/api/open/users', (req,res,next) => { //for routes anything to do with 
 
 app.use('/', express.static('../se3316-tsmit256-lab4-Angular/dist/se3316-tsmit256-lab4-Angular')); //used to serve front-end static files from static folder
 
-//for all routes related to reviews
-app.use('/api/secure/reviews', (req,res,next) => {
-    var test = db.get('reviews').value();
-
-    if(!test){ //If the reviews component of the database doesn't exist, then create default
-        db.defaults({ reviews: []}).write(); //Add default reviews array
-    }
-
-    next(); //keep going
-})
-
 
 //Make sure there is a valid token for any request trying to access secured content
 app.use('/api/secure', (req, res, next) => {
@@ -96,6 +85,17 @@ app.use('/api/secure', (req, res, next) => {
     }
     
     next();
+})
+
+//for all routes related to reviews
+app.use('/api/secure/reviews', (req,res,next) => {
+    var test = db.get('reviews').value();
+
+    if(!test){ //If the reviews component of the database doesn't exist, then create default
+        db.defaults({ reviews: []}).write(); //Add default reviews array
+    }
+
+    next(); //keep going
 })
 
 
@@ -223,6 +223,10 @@ app.route('/api/secure/schedules')
    //The 'secure' allows access to user-specific schedules
   .get((req,res) => {
         const schedules = db.get('schedules').filter({creatorId: req.user.id}).value();
+        
+        //sort schedules by lastModified, starting with most recent schedule first
+        schedules.sort( (a,b) => new Date(b.lastModified) - new Date(a.lastModified));
+        
         res.send(schedules);
    })
 
@@ -737,6 +741,5 @@ app.listen(port, () => {
         //append reviews to course
         courses[c].reviews = reviews;
     }
-    console.log(courses);
     return courses;
  }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Schedule } from '../_models/schedule';
+import { PublicSchedule, Schedule } from '../_models/schedule';
 import { ScheduleService } from '../_services/schedule.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -60,8 +60,24 @@ export class SchedulesComponent implements OnInit {
     let result = this.scheduleService.getSchedules();
     
     if(result){
-      result.subscribe(data => this.schedules = data);
+      result.subscribe(
+        data => {
+          this.schedules = data;
+          //Set all showdetails to be false initially (only show glance at beginning)
+          for(let i=0; i<this.schedules.length; i++){
+            this.schedules[i].showDetail = false;
+        }
+        });
     }
+  }
+
+  toggleExpand(schedule){
+    schedule.showDetail = !schedule.showDetail;
+  }
+
+  //Pairs property is an object that must be converted to array before displaying in *ngFor loop
+  toArray(pairs){
+    return Object.keys(pairs).map(key => pairs[key])
   }
 
   selectedSchedule: Schedule;
