@@ -39,21 +39,22 @@ export class SchedDetailComponent implements OnInit {
     }
 
     //if there was a request to delete a pair
-    if(this.f.deletedPair){
-      //check that requesting deleted pair is in the schedule
-      //remove deleted pair from schedule pairs if it is in there
-      var validDeleteReq = false;
-      for(let i=0; i < this.sched.pairs.length; i++){
-        let parts =  this.f.deletedPair.value.split(' ');
+    if(this.f.deletePair.value){
+      let parts =  this.f.deletePair.value.split(' ');
+      
+      //there should only be two parts
+      if(parts.length == 2){
+        let tempSubjectCode = parts[0];
+        let tempCatalogNbr = parts[1];
 
-        if(parts.length != 2){
-          let tempSubjectCode = parts[0];
-          let tempCatalogNbr = parts[1];
-
+        //check that requesting deleted pair is in the schedule and remove deleted pair from schedule pairs if it is in there
+        var validDeleteReq = false;
+        for(let i=0; i < this.sched.pairs.length; i++){
           //if the subjectCode matches and the catalog_nbr matches
           if(this.sched.pairs[i].subjectCode == tempSubjectCode && this.sched.pairs[i].catalog_nbr == tempCatalogNbr){
             validDeleteReq = true;
             this.sched.pairs.splice(i, 1);
+            break;
           }
         }
       }
