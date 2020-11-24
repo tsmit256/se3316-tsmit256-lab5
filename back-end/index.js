@@ -202,6 +202,12 @@ app.route('/api/secure/schedules')
 
     //Create a new schedule with a given schedule name
   .post((req, res) => {
+    //Ensure that there is not already 20 named lists associated with this user
+    usersSchedules = db.get('schedules').filter({creatorId: req.user.id}).value();
+    if(usersSchedules.length >= 20){
+        return res.status('404').send('You have already reached 20 lists. Please delete to add another.')
+    }
+
     const name_dirty = req.body.name;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
     const descr_dirty = req.body.description;

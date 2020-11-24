@@ -67,6 +67,7 @@ export class SchedulesComponent implements OnInit {
   selectedSchedule: Schedule;
   onSelect(schedule: Schedule): void {
     this.selectedSchedule = schedule;
+    this.deleteConfirm = false;
   }
 
   add(): void {
