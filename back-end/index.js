@@ -55,7 +55,7 @@ app.use('/', express.static('../se3316-tsmit256-lab4-Angular/dist/se3316-tsmit25
 
 
 //Make sure there is a valid token for any request trying to access secured content
-app.use('/api/secure', (req, res, next) => {
+app.use(['/api/secure', '/api/admin'], (req, res, next) => {
     //Get the accessToken from headers
     let accessTokenHeader = req.headers.authorization;
     let accessToken;
@@ -75,8 +75,14 @@ app.use('/api/secure', (req, res, next) => {
         //verify the accessToken
         payload = jwt.verify(accessToken, ACCESS_TOKEN_SECRET);
 
-        if(payload.role != 'regular')
-            return res.status(401).send('You do not have access to this page');
+        //if request is coming from admin then role must be admin
+        if(req.originalUrl.includes('/api/admin') && payload.role != 'admin'){
+            return res.status(401).send('You need to be administrator to access to this page');
+        }
+        //if request is secure then role can be either regular or admin
+        else if(payload.role != 'regular' && payload.role != 'admin'){
+            return res.status(401).send('You must be logged in to access this page');
+        }
         
         req.user = payload;
     }
@@ -289,7 +295,7 @@ app.route('/api/secure/schedules')
 
     //Only allow user to access schedules that they made
     if(req.user.id != oldSched.creatorId){
-        return res.status('401').send('This is a private schedule that you did not create');
+        return res.status(401).send('This is a private schedule that you did not create');
     }
 
     const schedule = {
@@ -410,7 +416,7 @@ app.route('/api/secure/schedules/:scheduleName')
 
     //Only allow user to access schedules that they made
     if(req.user.id != schedule.creatorId){
-        return res.status('401').send('This is a private schedule that you did not create');
+        return res.status(401).send('This is a private schedule that you did not create');
     }
 
     //get the pairs for the specified scheduleName
@@ -508,9 +514,12 @@ app.post('/api/open/users/authenticate', (req,res) => {
 
     var jwtBearerToken = issueJwtToken(user);
 
+    var role = user.get('role').value()
+
     // set it in the HTTP Response body
     res.status(200).json({
-        token: jwtBearerToken
+        token: jwtBearerToken,
+        role: role
     });    
 
 });
@@ -574,9 +583,12 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
     
         var jwtBearerToken = issueJwtToken(user);
     
+        var role = user.get('role').value()
+
         // set it in the HTTP Response body
         res.status(200).json({
-            token: jwtBearerToken
+            token: jwtBearerToken,
+            role: role
         }); 
     }).catch(err => {
         console.error;
@@ -683,6 +695,25 @@ app.route('/api/secure/reviews/:subjectCode/:courseCode')
     
     res.send(review);
   });
+
+
+//upgrade a user's role to admin
+app.post('/api/admin/grantPrivilege', (req, res) => {
+    const email_dirty = req.body.email;
+    const email_clean = validateAndSanitize.cleanEmail(res, email_dirty);
+
+    const user = db.get('users').find({email: email_clean}).value();
+
+    if(!user){
+        return res.status(404).send("There is no user with this email.")
+    }
+
+    //assign the new role privilege
+    db.get('users').find({email: email_clean})
+        .assign({role: "admin"}).write();
+
+    res.send({role: "admin"});    
+});
 
 
 

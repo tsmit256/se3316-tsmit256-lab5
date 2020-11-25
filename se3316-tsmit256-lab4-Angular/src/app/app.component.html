@@ -1,7 +1,10 @@
 <h1>{{title}}</h1>
 
-<nav *ngIf="!currentUser">
-  <a routerLink="/login">Login</a>
+<h2 *ngIf="currentUser && currentUser.role == 'admin'">You are a site manager</h2>
+
+<nav>
+  <a routerLink="/login">Login Page</a>
+  <a *ngIf="currentUser" (click)="logout()">Logout</a>
 </nav>
 
 <nav>
@@ -10,8 +13,12 @@
 </nav>
 
 <nav *ngIf="currentUser">
-  <a (click)="logout()">Logout</a>
   <a routerLink="/schedules">Manage Schedules</a>
+</nav>
+
+<nav *ngIf="currentUser && currentUser.role == 'admin'">
+  <a routerLink="/manage-users">Manage Users</a>
+  <a routerLink="/manage-policies">Manage Policies</a>
 </nav>
 
 <router-outlet></router-outlet>

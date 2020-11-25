@@ -23,7 +23,7 @@ function cleanScheduleName(res, dirtyInput){
 
 //Ensures email has 1 '@' and not longer than 320 char and strips all special characters
 function cleanEmail(res, dirtyInput){
-    if((dirtyInput.match(/@/g) || []).length != 1){
+    if((!dirtyInput || dirtyInput.match(/@/g) || []).length != 1){
         return res.status('400').send('Email should have exactly one "@" character');
     }
 
@@ -41,7 +41,7 @@ function cleanEmail(res, dirtyInput){
 
 //Remove special characters from password and make less than 100 characters
 function cleanPassword(res, dirtyInput){
-    if(dirtyInput.length > 100 || dirtyInput.length < 1){
+    if(!dirtyInput || dirtyInput.length > 100 || dirtyInput.length < 1){
         return res.status('400').send('Password should be between 1 and 100 characters');
     }
 
@@ -50,8 +50,11 @@ function cleanPassword(res, dirtyInput){
 } 
 
 function cleanName(res, dirtyInput){
-    if(dirtyInput.length > 200 || dirtyInput.length < 1){
+    if(!dirtyInput || dirtyInput.length > 200 || dirtyInput.length < 1){
         return res.status('400').send('Name should be between 1 and 200 characters');
+    }
+    if(dirtyInput == "administrator"){
+        return res.status('400').send('This name is reserved. Please use a different name');
     }
 
     const cleanInput = dirtyInput.replace(/[<>]/g, "");
@@ -59,7 +62,7 @@ function cleanName(res, dirtyInput){
 }
 
 function cleanKeyword(res, dirtyInput){
-    if(dirtyInput.length > 200 || dirtyInput.length < 4){
+    if(!dirtyInput || dirtyInput.length > 200 || dirtyInput.length < 4){
         return res.status('400').send('Keyword should be between 1 and 200 characters');
     }
 
@@ -123,7 +126,6 @@ function cleanPairs(res, pairs){
 
 function cleanSchedId(res, input){
     //ensure that schedId is a number
-    console.log(input);
     if(typeof(input) === typeof(1) || input == 0){
         return input;
     }
@@ -131,7 +133,7 @@ function cleanSchedId(res, input){
 }
 
 function cleanReviewDescription(res, descr){
-    if(descr.length > 500 || descr.length < 1){
+    if(!descr || descr.length > 500 || descr.length < 1){
         return res.status('400').send('Description should be <= 500 and >= 1 characters');
     }
 

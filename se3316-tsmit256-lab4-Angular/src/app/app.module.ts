@@ -21,6 +21,7 @@ import { KeywordSearchComponent } from './keyword-search/keyword-search.componen
 import { PublicCourseListsComponent } from './public-course-lists/public-course-lists.component';
 import { SchedDetailComponent } from './sched-detail/sched-detail.component';
 import { CourseReviewComponent } from './course-review/course-review.component';
+import { ManageUsersComponent } from './manage-users/manage-users.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { CourseReviewComponent } from './course-review/course-review.component';
     PublicCourseListsComponent,
     SchedDetailComponent,
     CourseReviewComponent,
+    ManageUsersComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,16 @@
+<div class="contentClass">
+    <h2>Grant Admin Privilege</h2>
+    <form [formGroup]="grantForm" (ngSubmit)="grantPrivilege()">
+        <div class="form-group">
+            <label class="inputLabel" for="email">User's Email:</label>
+            <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+            <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                <div *ngIf="f.email.errors.required">Email is required</div>
+                <div *ngIf="f.email.errors.email">Email is not valid</div>
+            </div>
+        </div>
+    <button class="btn btn-primary">
+        Make Admin
+    </button>
+  </form>
+</div>

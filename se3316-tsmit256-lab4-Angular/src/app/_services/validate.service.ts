@@ -74,6 +74,10 @@ export class ValidateService {
         alert('Name should be between 1 and 200 characters');
         return false;
     }
+    if(name == "administrator"){
+      alert("This name is reserved. Please use a different name");
+      return false;
+    }
     if(/[<>]/.test(name)){
         alert('Please remove <> and [] characters from name');
         return false;

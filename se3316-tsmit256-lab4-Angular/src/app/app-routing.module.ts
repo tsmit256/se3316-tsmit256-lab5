@@ -11,6 +11,8 @@ import { LoginComponent } from './login/login.component';
 import { AccntVerificationComponent } from './accnt-verification/accnt-verification.component';
 import { KeywordSearchComponent } from './keyword-search/keyword-search.component';
 import { CourseReviewComponent } from './course-review/course-review.component';
+import { ManageUsersComponent } from './manage-users/manage-users.component';
+import { AuthGuardAdmin } from './_helpers/auth.guard.admin';
 
 const routes: Routes = [
   { path: 'subjects', component: SubjectsComponent},
@@ -29,6 +31,7 @@ const routes: Routes = [
   { path: 'keyword-search', component: KeywordSearchComponent},
   { path: ':schedName/public-timetable-results', component: TimetableResultsComponent},
   { path: 'course-review/:subjectCode/:courseCode', component: CourseReviewComponent, canActivate: [AuthGuard]},
+  { path: 'manage-users', component: ManageUsersComponent, canActivate: [AuthGuardAdmin]},
   { path: '**', redirectTo: '/subjects'}
 ];
 
