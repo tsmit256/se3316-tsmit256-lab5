@@ -281,7 +281,7 @@ app.route('/api/secure/schedules')
 //Used to update changes to a schedule
   .put((req,res) => {
     const schedId_dirty = req.body.schedId;
-    const schedId_clean = validateAndSanitize.cleanSchedId(res, schedId_dirty);
+    const schedId_clean = validateAndSanitize.cleanId(res, schedId_dirty);
     const name_dirty = req.body.name;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
     const descr_dirty = req.body.description;
@@ -686,7 +686,9 @@ app.route('/api/secure/reviews/:subjectCode/:courseCode')
         pair: {
             subjectCode: subjectCode_clean,
             catalog_nbr: courseCode_clean
-        }
+        },
+        hidden: false,
+        id: db.get('reviews').value().length
     }
 
     db.get('reviews')
@@ -695,6 +697,30 @@ app.route('/api/secure/reviews/:subjectCode/:courseCode')
     
     res.send(review);
   });
+
+
+//Get all reviews
+app.get('/api/admin/reviews', (req,res) =>{
+    const reviews = db.get('reviews').value();
+    res.send(reviews);
+});
+
+
+//Change the hidden boolean of review
+app.post('/api/admin/reviews-hidden', (req,res) => {
+    const reviewId_dirty = req.body.reviewId;
+    const reviewId_clean = validateAndSanitize.cleanId(res, reviewId_dirty);
+
+    //get the current hidden status
+    var currentStatus = db.get('reviews').find({id: reviewId_clean}).value().hidden;
+    var futureStatus = !currentStatus;
+
+    //change the hidden status
+    db.get('reviews').find({id: reviewId_clean})
+        .assign({hidden: futureStatus}).write();
+
+    res.send({hidden: futureStatus});
+});
 
 
 //upgrade a user's role to admin
@@ -715,6 +741,29 @@ app.post('/api/admin/grantPrivilege', (req, res) => {
     res.send({role: "admin"});    
 });
 
+
+
+//Change a user's deactivation boolean
+app.post('/api/admin/activation', (req, res) => {
+    const email_dirty = req.body.email;
+    const email_clean = validateAndSanitize.cleanEmail(res, email_dirty);
+
+    const user = db.get('users').find({email: email_clean}).value();
+
+    if(!user){
+        return res.status(404).send("There is no user with this email.")
+    }
+
+    //get the current deactivated status
+    var currentStatus = db.get('users').find({email: email_clean}).value().deactivated;
+    var futureStatus = !currentStatus;
+
+    //assign the new role privilege
+    db.get('users').find({email: email_clean})
+        .assign({deactivated: futureStatus}).write();
+
+    res.send({deactivated: futureStatus});    
+});
 
 
 app.listen(port, () => {
@@ -757,20 +806,28 @@ app.listen(port, () => {
  }
 
  function retrieveReviewsFromDb(courses){
-
+    //get reviews
+    var allReviews = db.get('reviews').value();
+    
     //iterate through each course in courses
     for(var c in courses){
+        var relevantReviews = [];
+
         //specify how to filter the database of reviews
         let filterCriteria = {
             subjectCode: courses[c].subject,
             catalog_nbr: courses[c].catalog_nbr
         }
 
-        //get reviews related to pair
-        var reviews = db.get('reviews').filter({pair: filterCriteria}).value();
+        //only grab reviews related to course
+        for(var r in allReviews){
+            if(allReviews[r].pair.catalog_nbr == filterCriteria.catalog_nbr && allReviews[r].pair.subjectCode == filterCriteria.subjectCode){
+                relevantReviews.push(allReviews[r]);
+            }
+        }
         
         //append reviews to course
-        courses[c].reviews = reviews;
+        courses[c].reviews = relevantReviews;
     }
     return courses;
  }

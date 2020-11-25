@@ -14,3 +14,32 @@
     </button>
   </form>
 </div>
+
+<div class="contentClass">
+    <h2>Activate/Deactivate User</h2>
+    <form [formGroup]="activateForm" (ngSubmit)="toggleActivate()">
+        <div class="form-group">
+            <label class="inputLabel" for="email">User's Email:</label>
+            <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': aSubmitted && af.email.errors }" />
+            <div *ngIf="aSubmitted && af.email.errors" class="invalid-feedback">
+                <div *ngIf="af.email.errors.required">Email is required</div>
+                <div *ngIf="af.email.errors.email">Email is not valid</div>
+            </div>
+        </div>
+    <button class="btn btn-primary">
+        Toggle Activate/Deactivate
+    </button>
+  </form>
+</div>
+
+<div class="contentClass">
+    <h2>All Reviews</h2>
+    <div *ngFor="let review of reviews" class="review">
+        {{review.pair.subjectCode}} {{review.pair.catalog_nbr}}
+        <h4>{{review.creatorName}} on {{review.lastModified | date:'medium'}}: <span class="reviewText">{{review.message}}</span></h4>
+        <p>Hidden: {{review.hidden}}
+            <button (click)="toggleHidden(review.id)">Toggle Hidden</button>
+        </p>
+       
+    </div>
+</div>

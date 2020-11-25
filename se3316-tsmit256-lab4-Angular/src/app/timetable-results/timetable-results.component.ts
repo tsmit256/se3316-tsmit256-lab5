@@ -48,7 +48,6 @@ export class TimetableResultsComponent implements OnInit {
     else{//if there is no subjectCode or keyword part of the url, then show results via getCoursesFromSchedule()
       this.getCoursesFromSchedule();
     }
-    console.log(this.courses);
   }
 
   getCoursesFromSearch(): void{
@@ -68,7 +67,8 @@ export class TimetableResultsComponent implements OnInit {
     }
 
     tempObserv.subscribe(courses => {
-      this.courses = courses;});
+      this.courses = courses;
+    });
   }
 
   getCoursesFromSchedule(): void{

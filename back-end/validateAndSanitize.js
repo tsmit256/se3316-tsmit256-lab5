@@ -124,12 +124,12 @@ function cleanPairs(res, pairs){
     return pairs;
 }
 
-function cleanSchedId(res, input){
+function cleanId(res, input){
     //ensure that schedId is a number
     if(typeof(input) === typeof(1) || input == 0){
         return input;
     }
-    return res.status('400').send("The schedId is not a valid schedId");
+    return res.status('400').send("The id is not a valid id");
 }
 
 function cleanReviewDescription(res, descr){
@@ -154,5 +154,5 @@ exports.limitToPublicSchedules = limitToPublicSchedules;
 exports.cleanSchedDescription = cleanSchedDescription;
 exports.cleanBoolean = cleanBoolean;
 exports.cleanPairs = cleanPairs;
-exports.cleanSchedId = cleanSchedId;
+exports.cleanId = cleanId;
 exports.cleanReviewDescription = cleanReviewDescription;

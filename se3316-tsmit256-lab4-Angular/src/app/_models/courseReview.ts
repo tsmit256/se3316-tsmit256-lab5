@@ -6,6 +6,8 @@ export interface CourseReview{
     {
         subjectCode: string;
         catalog_nbr: string;
-    }>
+    }>;
+    hidden: boolean;
+    id: number;
 
 }

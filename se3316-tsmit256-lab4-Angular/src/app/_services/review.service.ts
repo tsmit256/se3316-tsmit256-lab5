@@ -37,6 +37,7 @@ export class ReviewService {
       );
   }
 
+  //Add a review to the database relating to a particular pair
   addReview(pair: Pair, message: string): Observable<CourseReview> {
     if (!this.validateService.isValidReviewDescription(message) ||
         !this.validateService.isValidCode(pair.subjectCode) ||

@@ -22,6 +22,7 @@ import { PublicCourseListsComponent } from './public-course-lists/public-course-
 import { SchedDetailComponent } from './sched-detail/sched-detail.component';
 import { CourseReviewComponent } from './course-review/course-review.component';
 import { ManageUsersComponent } from './manage-users/manage-users.component';
+import { ManagePoliciesComponent } from './manage-policies/manage-policies.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { ManageUsersComponent } from './manage-users/manage-users.component';
     SchedDetailComponent,
     CourseReviewComponent,
     ManageUsersComponent,
+    ManagePoliciesComponent,
   ],
   imports: [
     BrowserModule,

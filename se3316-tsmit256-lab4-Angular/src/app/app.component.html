@@ -3,7 +3,6 @@
 <h2 *ngIf="currentUser && currentUser.role == 'admin'">You are a site manager</h2>
 
 <nav>
-  <a routerLink="/login">Login Page</a>
   <a *ngIf="currentUser" (click)="logout()">Logout</a>
 </nav>
 
