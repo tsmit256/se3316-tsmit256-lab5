@@ -14,6 +14,7 @@ import { CourseReviewComponent } from './course-review/course-review.component';
 import { ManageUsersComponent } from './manage-users/manage-users.component';
 import { AuthGuardAdmin } from './_helpers/auth.guard.admin';
 import { ManagePoliciesComponent } from './manage-policies/manage-policies.component';
+import { PoliciesComponent } from './policies/policies.component';
 
 const routes: Routes = [
   { path: 'subjects', component: SubjectsComponent},
@@ -34,6 +35,7 @@ const routes: Routes = [
   { path: 'course-review/:subjectCode/:courseCode', component: CourseReviewComponent, canActivate: [AuthGuard]},
   { path: 'manage-users', component: ManageUsersComponent, canActivate: [AuthGuardAdmin]},
   { path: 'manage-policies', component: ManagePoliciesComponent, canActivate: [AuthGuardAdmin]},
+  { path: 'policies', component: PoliciesComponent},
   { path: '**', redirectTo: '/subjects'}
 ];
 

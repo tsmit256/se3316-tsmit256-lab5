@@ -4,11 +4,13 @@
 
 <nav>
   <a *ngIf="currentUser" (click)="logout()">Logout</a>
+  <a *ngIf="!currentUser" routerLink="/login">Login</a>
 </nav>
 
 <nav>
   <a routerLink="/subjects">Search Using Subject->CourseCode->Component</a>
-  <a routerLink="/keyword-search">Search Using Keywords</a>      
+  <a routerLink="/keyword-search">Search Using Keywords</a>   
+  <a routerLink="/policies">View Policies</a>   
 </nav>
 
 <nav *ngIf="currentUser">

@@ -10,7 +10,9 @@ import { ValidateService } from './validate.service';
 })
 export class PolicyService {
   spPolicyUrl = 'api/open/policies/sp';
-  spPolicyUpdateUrl = 'api/admin/policies/sp'
+  spPolicyUpdateUrl = 'api/admin/policies/sp';
+  dmcaPolicyUrl = 'api/open/policies/dmca';
+  dmcaPolicyUpdateUrl = 'api/admin/policies/dmca';
 
   constructor(private messageService: MessageService,
               private validateService: ValidateService,
@@ -20,6 +22,7 @@ export class PolicyService {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
+  //used to get the security and privacy policy
   getSpPolicy(): Observable<any>{
     return this.http.get(this.spPolicyUrl)
     .pipe(
@@ -28,6 +31,16 @@ export class PolicyService {
     );
   }
 
+  //used to get the DMCA policy
+  getDmcaPolicy(): Observable<any>{
+    return this.http.get(this.dmcaPolicyUrl)
+    .pipe(
+      tap(_ => this.log(`fetched dmca policy`)),
+      catchError(this.handleError<any>(`getDmcaPolicy`, []))
+    );
+  }
+
+  //used to update the security and privacy policy
   updateSpPolicy(message: string): Observable<any>{
     if(!this.validateService.isValidPolicy(message)){
       return;
@@ -39,7 +52,17 @@ export class PolicyService {
     );
   }
 
+  //used to update the DMCA policy
+  updateDmcaPolicy(message: string): Observable<any>{
+    if(!this.validateService.isValidPolicy(message)){
+      return;
+    }
 
+    return this.http.post(this.dmcaPolicyUpdateUrl, {descr: message}, this.httpOptions).pipe(
+      tap(() => this.log(`updated dmca policy`)),
+      catchError(this.handleError('updateDmcaPolicy'))
+    );
+  }
 
 
   /** Log a ReviewService message with the MessageService */

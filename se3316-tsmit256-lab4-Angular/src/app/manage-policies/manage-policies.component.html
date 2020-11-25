@@ -9,3 +9,15 @@
     </button>
   </form>
 </div>
+
+<div class="contentClass">
+    <h2>Edit DMCA Notice & Takedown Policy</h2>
+    <form [formGroup]="dmcaForm" (ngSubmit)="updateDmcaPolicy()">
+        <div class="form-group">
+            <textarea type="text" formControlName="message" class="form-control"></textarea>
+        </div>
+    <button class="btn btn-primary">
+        Update Policy
+    </button>
+  </form>
+</div>

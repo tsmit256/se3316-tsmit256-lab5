@@ -23,6 +23,7 @@ import { SchedDetailComponent } from './sched-detail/sched-detail.component';
 import { CourseReviewComponent } from './course-review/course-review.component';
 import { ManageUsersComponent } from './manage-users/manage-users.component';
 import { ManagePoliciesComponent } from './manage-policies/manage-policies.component';
+import { PoliciesComponent } from './policies/policies.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { ManagePoliciesComponent } from './manage-policies/manage-policies.compo
     CourseReviewComponent,
     ManageUsersComponent,
     ManagePoliciesComponent,
+    PoliciesComponent,
   ],
   imports: [
     BrowserModule,

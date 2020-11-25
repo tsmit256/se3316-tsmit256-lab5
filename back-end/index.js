@@ -798,12 +798,12 @@ app.post('/api/admin/policies/:policyName', (req,res) => {
     if(policyName != "sp" && policyName != "dmca"){
         return res.status('404').send("This is not a valid policyName");
     }
-    console.log("HEY1");
+    
     const newDescr_dirty = req.body.descr;
     const newDescr_clean = validateAndSanitize.cleanPolicyDescr(res, newDescr_dirty);
-    console.log("HEY");
+    
     db.get('policies').find({name: policyName}).assign({descr: newDescr_clean}).write();
-    console.log("HEYY");
+    
     res.send({descr: newDescr_clean});
 });
 
