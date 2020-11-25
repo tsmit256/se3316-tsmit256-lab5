@@ -13,6 +13,7 @@ import { KeywordSearchComponent } from './keyword-search/keyword-search.componen
 import { CourseReviewComponent } from './course-review/course-review.component';
 import { ManageUsersComponent } from './manage-users/manage-users.component';
 import { AuthGuardAdmin } from './_helpers/auth.guard.admin';
+import { ManagePoliciesComponent } from './manage-policies/manage-policies.component';
 
 const routes: Routes = [
   { path: 'subjects', component: SubjectsComponent},
@@ -32,6 +33,7 @@ const routes: Routes = [
   { path: ':schedName/public-timetable-results', component: TimetableResultsComponent},
   { path: 'course-review/:subjectCode/:courseCode', component: CourseReviewComponent, canActivate: [AuthGuard]},
   { path: 'manage-users', component: ManageUsersComponent, canActivate: [AuthGuardAdmin]},
+  { path: 'manage-policies', component: ManagePoliciesComponent, canActivate: [AuthGuardAdmin]},
   { path: '**', redirectTo: '/subjects'}
 ];
 

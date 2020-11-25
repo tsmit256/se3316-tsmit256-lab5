@@ -36,6 +36,17 @@ app.use(['/api/open/schedules', '/api/secure/schedules'], (req,res,next) =>{ //f
     next(); //keep going
 });
 
+//for routes including anything to do with policies
+app.use(['/api/open/policies', '/api/admin/policies'], (req, res, next) => {
+    var test = db.get('policies').value();
+
+    if(!test){ //If the policies component of the database does not exist, then create a default
+        db.defaults({ policies: [{name: "sp", descr: ""}, {name: "dmca", descr: ""}] }).write(); //Add default policies array
+    }
+    
+    next(); //keep going
+})
+
 app.use('/api/open/users', (req,res,next) => { //for routes anything to do with users
     var test = db.get('users').value();
     var test2 = db.get('usersToConfirm').value();
@@ -763,6 +774,37 @@ app.post('/api/admin/activation', (req, res) => {
         .assign({deactivated: futureStatus}).write();
 
     res.send({deactivated: futureStatus});    
+});
+
+
+//Getting Policies
+app.route('/api/open/policies/:policyName')
+    .get((req,res) => {
+    const policyName = req.params.policyName;
+    if(policyName != "sp" && policyName != "dmca"){
+        return res.status('404').send("This is not a valid policyName");
+    }
+
+    const policy = db.get('policies').find({name: policyName}).value();
+
+    res.send(policy);
+});
+
+
+//Updating Policies
+app.post('/api/admin/policies/:policyName', (req,res) => {
+    console.log("HEY1111");
+    const policyName = req.params.policyName;
+    if(policyName != "sp" && policyName != "dmca"){
+        return res.status('404').send("This is not a valid policyName");
+    }
+    console.log("HEY1");
+    const newDescr_dirty = req.body.descr;
+    const newDescr_clean = validateAndSanitize.cleanPolicyDescr(res, newDescr_dirty);
+    console.log("HEY");
+    db.get('policies').find({name: policyName}).assign({descr: newDescr_clean}).write();
+    console.log("HEYY");
+    res.send({descr: newDescr_clean});
 });
 
 

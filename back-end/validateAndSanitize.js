@@ -141,6 +141,15 @@ function cleanReviewDescription(res, descr){
     return cleanInput;
 }
 
+function cleanPolicyDescr(res, descr){
+    if(descr.length > 10000){
+        return res.status('400').send('Description should be <= 10000');
+    }
+
+    const cleanInput = descr.replace(/<>/g, "");
+    return cleanInput;
+}
+
 
 
 
@@ -156,3 +165,4 @@ exports.cleanBoolean = cleanBoolean;
 exports.cleanPairs = cleanPairs;
 exports.cleanId = cleanId;
 exports.cleanReviewDescription = cleanReviewDescription;
+exports.cleanPolicyDescr = cleanPolicyDescr;

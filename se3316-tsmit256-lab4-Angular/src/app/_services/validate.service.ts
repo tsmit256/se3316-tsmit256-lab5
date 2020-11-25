@@ -137,4 +137,17 @@ export class ValidateService {
     return true;
   }
 
+
+  isValidPolicy(descr: string){
+    if(descr.length > 10000){
+      alert("Description should be <= 10000 characters");
+      return false;
+    }
+    if(/<>/.test(descr)){
+      alert('Please remove <> characters from policy description');
+      return false;
+    }
+    return true;
+  }
+
 }
