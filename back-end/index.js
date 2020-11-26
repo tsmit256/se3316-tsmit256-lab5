@@ -159,7 +159,7 @@ app.get('/api/open/courses/:subjectCode', (req,res) => {
     var courses = parseCourseDataFile.extractCoursesBySubject(subjectCode_clean);
 
     if(!courses){ //subject will be false if not found by parsing function above.
-        return res.status('404').send('The subject code was not found.');
+        return res.status(404).send('The subject code was not found.');
     }
 
     //append reviews to courses
@@ -183,7 +183,7 @@ app.get('/api/open/courses/:subjectCode/:courseCode', (req,res) => {
     var course = parseCourseDataFile.extractCoursesByCatalogNbr(subjectCode_clean, courseCode_clean);
 
     if(!course){
-        return res.status('404').send('The combination of course code and subject code was not found.');
+        return res.status(404).send('The combination of course code and subject code was not found.');
     }
 
     //append reviews to course
@@ -210,7 +210,7 @@ app.get('/api/open/courses/:subjectCode/:courseCode/:component', (req,res) => {
     var course = parseCourseDataFile.extractCoursesByComponent(subjectCode_clean, courseCode_clean, component_clean);
 
     if(!course){
-        return res.status('404').send('The combination of course code, subject code, and component was not found.');
+        return res.status(404).send('The combination of course code, subject code, and component was not found.');
     }
 
     //append reviews to course
@@ -229,7 +229,7 @@ app.get('/api/open/keyword/courses/:keyword', (req,res) => {
     var courses = parseCourseDataFile.extractCoursesByKeyword(keyword_clean);
 
     if(!courses){ //courses will be false if not found by parsing function above.
-        return res.status('404').send('This keyword has no similar courseCodes or classNames.');
+        return res.status(404).send('This keyword has no similar courseCodes or classNames.');
     }
 
     //append reviews to courses
@@ -268,7 +268,7 @@ app.route('/api/secure/schedules')
     //Ensure that there is not already 20 named lists associated with this user
     usersSchedules = db.get('schedules').filter({creatorId: req.user.id}).value();
     if(usersSchedules.length >= 20){
-        return res.status('404').send('You have already reached 20 lists. Please delete to add another.')
+        return res.status(404).send('You have already reached 20 lists. Please delete to add another.')
     }
 
     const name_dirty = req.body.name;
@@ -294,7 +294,7 @@ app.route('/api/secure/schedules')
     //Check if the schedule name already exists
     for(var i in existingScheds){
         if(existingScheds[i].name == schedule.name){ //If a schedule with that name already exists in the database
-            return res.status('400').send('A schedule with that name already exists.');
+            return res.status(400).send('A schedule with that name already exists.');
         }
     }
 
@@ -341,7 +341,7 @@ app.route('/api/secure/schedules')
     //Ensure that new name does not already exist
     for(var i in existingScheds){
         if(existingScheds[i].name == schedule.name && existingScheds[i].schedId != schedule.schedId){ //If a schedule with that name already exists in the database
-            return res.status('400').send('Another schedule with that new name already exists.');
+            return res.status(400).send('Another schedule with that new name already exists.');
         }
     }
 
@@ -371,7 +371,7 @@ app.route('/api/secure/schedules/:scheduleName')
 
     //If the schedule name does not exist send a 404 error
     if(!schedule){
-        return res.status('404').send('A schedule with that name does not exist.');
+        return res.status(404).send('A schedule with that name does not exist.');
     }
 
     //Get the subject and course code pair
@@ -386,7 +386,7 @@ app.route('/api/secure/schedules/:scheduleName')
     const course = parseCourseDataFile.extractCoursesByCatalogNbr(subjectCode_clean, courseCode_clean);
 
     if(!course){
-        return res.status('404').send('The combination of course code and subject code is not a proper pair.');
+        return res.status(404).send('The combination of course code and subject code is not a proper pair.');
     }
 
     //Create a new pair with the clean subjectcode and courseCode
@@ -440,7 +440,7 @@ app.route('/api/secure/schedules/:scheduleName')
 
     //If the schedule name does not exist send a 404 error
     if(!schedule){
-        return res.status('404').send('A schedule with that name does not exist.');
+        return res.status(404).send('A schedule with that name does not exist.');
     }
 
     //Only allow user to access schedules that they made
@@ -469,7 +469,7 @@ app.route('/api/secure/schedules/:scheduleName')
 
     //If the schedule name does not exist send a 404 error
     if(!schedule){
-        return res.status('404').send('A schedule that you made does not exist with that name.');
+        return res.status(404).send('A schedule that you made does not exist with that name.');
     }
 
     db.get('schedules')
@@ -491,12 +491,12 @@ app.route('/api/open/schedules/:scheduleName')
 
     //If the schedule name does not exist send a 404 error
     if(!schedule){
-        return res.status('404').send('A schedule with that name does not exist.');
+        return res.status(404).send('A schedule with that name does not exist.');
     }
 
     //Need to ensure that this is a public schedule 
     if(!schedule.public){
-        return res.status('403').send('This schedule is private');
+        return res.status(403).send('This schedule is private');
     }
 
     //get the pairs for the specified scheduleName
@@ -527,18 +527,18 @@ app.post('/api/open/users/authenticate', (req,res) => {
       .value();
 
     if(!existingPassword){
-        return res.status('404').send('A user account with that email does not exist');
+        return res.status(404).send('A user account with that email does not exist');
     }
 
     if(!comparePasswords(password_clean, existingPassword)){
-        return res.status('400').send('Password and email combination not correct');
+        return res.status(400).send('Password and email combination not correct');
     }
 
     const deactivatedStatus = user.get('deactivated').value();
 
     if(deactivatedStatus){
         //Return message if deactivated
-        return res.status('403').send('Your account is marked as deactivated. Please contact site administrator.');
+        return res.status(403).send('Your account is marked as deactivated. Please contact site administrator.');
     }
 
     var jwtBearerToken = issueJwtToken(user.value());
@@ -602,7 +602,7 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
             deactivatedStatus = user.deactivated;
             if(deactivatedStatus){
                 //Return message if deactivated
-                return res.status('403').send('Your account is marked as deactivated. Please contact site administrator.');
+                return res.status(403).send('Your account is marked as deactivated. Please contact site administrator.');
             }
             console.log("B");
             jwtBearerToken = issueJwtToken(user);
@@ -615,7 +615,7 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
             console.log("D");
             if(deactivatedStatus){
                 //Return message if deactivated
-                return res.status('403').send('Your account is marked as deactivated. Please contact site administrator.');
+                return res.status(403).send('Your account is marked as deactivated. Please contact site administrator.');
             }
             console.log("E");
             jwtBearerToken = issueJwtToken(db.get('users').find({id: payload['sub']}).value());
@@ -626,7 +626,7 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
         // send token and role back
         res.status(200).send({token: jwtBearerToken, role: role}); 
     }).catch(err => {
-        res.status('500').send('Google verification process has failed')
+        res.status(500).send('Google verification process has failed')
     });
 });
 
@@ -647,11 +647,12 @@ app.post('/api/open/users/newAccount', (req, res) => {
 
     for(var i in existingUsers){
         if(existingUsers[i].email == email_clean)
-            return res.status('400').send('An account with that email already exists');
+            return res.status(400).send('An account with that email already exists');
     }
 
-    verificationLink = hashPassword(email_clean); //hashing based on user information
-   
+    verificationLink = hashPassword(email_clean); //hashing based on user information and remove slashes to avoid url conflicts
+    verificationLink = verificationLink.replace('/', '');
+
     const newUser = {
         name: name_clean,
         email: email_clean,
@@ -679,7 +680,7 @@ app.post('/api/open/users/verification', (req, res) => {
     .value();
     
     if(!newUser)
-        return res.status('404').send('There is no new user account related to this link');
+        return res.status(404).send('There is no new user account related to this link');
 
     //remove the user from the usersToConfirm database component
     db.get('usersToConfirm')
@@ -805,7 +806,7 @@ app.route('/api/open/policies/:policyName')
     .get((req,res) => {
     const policyName = req.params.policyName;
     if(policyName != "sp" && policyName != "dmca" && policyName != "aup"){
-        return res.status('404').send("This is not a valid policyName");
+        return res.status(404).send("This is not a valid policyName");
     }
 
     const policy = db.get('policies').find({name: policyName}).value();
@@ -819,7 +820,7 @@ app.post('/api/admin/policies/:policyName', (req,res) => {
     console.log("HEY1111");
     const policyName = req.params.policyName;
     if(policyName != "sp" && policyName != "dmca" && policyName != "aup"){
-        return res.status('404').send("This is not a valid policyName");
+        return res.status(404).send("This is not a valid policyName");
     }
     
     const newDescr_dirty = req.body.descr;

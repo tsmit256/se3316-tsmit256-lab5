@@ -38,9 +38,9 @@ export class SubjectService {
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
-      alert(error);
+      alert(error.error);
     
-      this.log(`${operation} failed: ${error}`);
+      this.log(`${operation} failed: ${error.error}`);
 
       // Let the app keep running by returning an empty result.
       return EMPTY;

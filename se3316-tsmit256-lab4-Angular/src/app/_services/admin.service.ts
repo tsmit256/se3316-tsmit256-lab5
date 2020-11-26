@@ -104,7 +104,7 @@ export class AdminService {
 
       alert(error.error);
     
-      this.log(`${operation} failed: ${error}`);
+      this.log(`${operation} failed: ${error.error}`);
 
       // Let the app keep running by returning an empty result.
       return EMPTY;

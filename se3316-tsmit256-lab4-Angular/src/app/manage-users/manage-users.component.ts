@@ -104,9 +104,6 @@ export class ManageUsersComponent implements OnInit {
             alert("User deactivated!");
           else
             alert("User activated");
-      },
-      error => {
-        alert(error);
       });
     }
   }

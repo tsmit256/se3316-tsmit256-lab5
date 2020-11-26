@@ -77,10 +77,11 @@ export class LoginComponent implements OnInit {
       if(result){ //Don't continue if it doesn't return a value
         result.subscribe(
             data => {
+                this.loginError = "";
                 this.router.navigate([this.returnUrl]);
             },
             error => {
-                this.loginError = error;
+                this.loginError = error.error;
                 this.loading = false;
             });
       }
@@ -110,8 +111,8 @@ export class LoginComponent implements OnInit {
               alert(`Email Template:\nfrom: 'Do Not Reply <webtechlab5@gmail.com>',\nsubject: 'Please confirm account',\nhtml: 'Click the following link to confirm your account</p><p>${this.verifyLink}<p>\ntext: 'Please confirm your account by clicking the following link: ${this.verifyLink}`);
           },
           error => { 
-              alert(error);
-              this.registerError = error;
+              alert(error.error);
+              this.registerError = error.error;
               this.loading = false;
           });
     }
@@ -137,7 +138,7 @@ export class LoginComponent implements OnInit {
             this.router.navigate([this.returnUrl]);
         },
         error => {
-            this.loginError = error;
+            this.loginError = error.error;
             this.loading = false;
         }
     );

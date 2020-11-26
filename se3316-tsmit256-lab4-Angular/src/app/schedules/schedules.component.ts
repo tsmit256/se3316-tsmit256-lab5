@@ -82,7 +82,13 @@ export class SchedulesComponent implements OnInit {
 
   selectedSchedule: Schedule;
   onSelect(schedule: Schedule): void {
-    this.selectedSchedule = schedule;
+    if(this.selectedSchedule == schedule){
+      this.selectedSchedule = null; //deselect if already selected
+    }
+    else{
+      this.selectedSchedule = schedule;
+    }
+    
     schedule.deleteConfirm = false;
   }
 
