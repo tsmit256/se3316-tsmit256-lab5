@@ -9,11 +9,13 @@ import { PolicyService } from '../_services/policy.service';
 export class PoliciesComponent implements OnInit {
   spPolicyDescr = "";
   dmcaPolicyDescr = "";
+  aupPolicyDescr = "";
 
   constructor(private policyService: PolicyService) { }
 
   ngOnInit(): void {
     this.getSpPolicy();
+    this.getAupPolicy();
     this.getDmcaPolicy();
   }
 
@@ -31,5 +33,11 @@ export class PoliciesComponent implements OnInit {
       });
   }
 
+  getAupPolicy(){
+    this.policyService.getAupPolicy().subscribe(
+      data => {
+        this.aupPolicyDescr = data.descr;
+      });
+  }
 
 }

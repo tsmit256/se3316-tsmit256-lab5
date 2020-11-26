@@ -11,6 +11,8 @@ import { ValidateService } from './validate.service';
 export class PolicyService {
   spPolicyUrl = 'api/open/policies/sp';
   spPolicyUpdateUrl = 'api/admin/policies/sp';
+  aupPolicyUrl = 'api/open/policies/aup';
+  aupPolicyUpdateUrl = 'api/admin/policies/aup';
   dmcaPolicyUrl = 'api/open/policies/dmca';
   dmcaPolicyUpdateUrl = 'api/admin/policies/dmca';
 
@@ -28,6 +30,15 @@ export class PolicyService {
     .pipe(
       tap(_ => this.log(`fetched sp policy`)),
       catchError(this.handleError<any>(`getSpPolicy`, []))
+    );
+  }
+
+  //used to get the acceptable use policy
+  getAupPolicy(): Observable<any>{
+    return this.http.get(this.aupPolicyUrl)
+    .pipe(
+      tap(_ => this.log(`fetched aup policy`)),
+      catchError(this.handleError<any>(`getAupPolicy`, []))
     );
   }
 
@@ -49,6 +60,18 @@ export class PolicyService {
     return this.http.post(this.spPolicyUpdateUrl, {descr: message}, this.httpOptions).pipe(
       tap(() => this.log(`updated sp policy`)),
       catchError(this.handleError('updateSpPolicy'))
+    );
+  }
+
+  //used to update the acceptable use policy
+  updateAupPolicy(message: string): Observable<any>{
+    if(!this.validateService.isValidPolicy(message)){
+      return;
+    }
+
+    return this.http.post(this.aupPolicyUpdateUrl, {descr: message}, this.httpOptions).pipe(
+      tap(() => this.log(`updated aup policy`)),
+      catchError(this.handleError('updateAupPolicy'))
     );
   }
 

@@ -143,11 +143,28 @@ function cleanReviewDescription(res, descr){
 
 function cleanPolicyDescr(res, descr){
     if(descr.length > 10000){
-        return res.status('400').send('Description should be <= 10000');
+        return res.status('400').send('Description should be <= 10000 characters');
     }
 
     const cleanInput = descr.replace(/<>/g, "");
     return cleanInput;
+}
+
+
+function cleanDate(res, date){
+    if(date.length > 100 || date.length < 1){
+        return res.status('400').send('Date should be >0 and <= 100 characters');
+    }
+
+    const cleanInput = date.replace(/<>/g, "");
+    return cleanInput;
+}
+
+function cleanTypeReq(res, typeReq){
+    if(typeReq != "dispute" && typeReq != "notice" && typeReq != "request"){
+        return res.status('400').send('Not a valid type request');
+    }
+    return typeReq;
 }
 
 
@@ -166,3 +183,5 @@ exports.cleanPairs = cleanPairs;
 exports.cleanId = cleanId;
 exports.cleanReviewDescription = cleanReviewDescription;
 exports.cleanPolicyDescr = cleanPolicyDescr;
+exports.cleanDate = cleanDate;
+exports.cleanTypeReq = cleanTypeReq;

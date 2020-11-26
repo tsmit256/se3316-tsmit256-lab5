@@ -2,7 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { CourseReview } from '../_models/courseReview';
+import { CourseReview, Log } from '../_models/courseReview';
+import { Pair } from '../_models/schedule';
 import { MessageService } from './message.service';
 import { ValidateService } from './validate.service';
 
@@ -69,6 +70,23 @@ export class AdminService {
       tap(() => this.log(`changed hidden status`)),
       catchError(this.handleError<any>('toggleHidden'))
     );
+  }
+
+  //Log a request/notice/dispute
+  logReq(typeReq: string, date: string, id: number): Observable<any>{   
+    return this.http.post(`api/admin/logs`, {typeReq: typeReq, date: date, id: id}, this.httpOptions).pipe(
+      tap(() => this.log(`added log`)),
+      catchError(this.handleError<any>('logReq'))
+    );
+  }
+
+  //Get all logs
+  getAllLogs(): Observable<Log[]>{
+    return this.http.get<Log[]>('api/admin/logs')
+      .pipe(
+        tap(_ => this.log(`fetched all logs`)),
+        catchError(this.handleError<Log[]>(`getAllLogs`, []))
+      );
   }
 
   /** Log a ReviewService message with the MessageService */

@@ -2,6 +2,20 @@
     <h2>Edit Security & Privacy Policy</h2>
     <form [formGroup]="spForm" (ngSubmit)="updateSpPolicy()">
         <div class="form-group">
+            <label class="inputLabel" for="message"></label>
+            <textarea type="text" formControlName="message" class="form-control"></textarea>
+        </div>
+    <button class="btn btn-primary">
+        Update Policy
+    </button>
+  </form>
+</div>
+
+<div class="contentClass">
+    <h2>Edit Acceptable Use Policy</h2>
+    <form [formGroup]="aupForm" (ngSubmit)="updateAupPolicy()">
+        <div class="form-group">
+            <label class="inputLabel" for="message"></label>
             <textarea type="text" formControlName="message" class="form-control"></textarea>
         </div>
     <button class="btn btn-primary">
@@ -14,10 +28,44 @@
     <h2>Edit DMCA Notice & Takedown Policy</h2>
     <form [formGroup]="dmcaForm" (ngSubmit)="updateDmcaPolicy()">
         <div class="form-group">
+            <label class="inputLabel" for="message"></label>
             <textarea type="text" formControlName="message" class="form-control"></textarea>
         </div>
     <button class="btn btn-primary">
         Update Policy
     </button>
   </form>
+</div>
+
+<div class="contentClass">
+    <h2>DMCA Takedown Procedure</h2>
+    <p>
+    <i>Summary</i>
+    <br>
+    This document describes the workflow for implementing the DMCA notice & takedown policy. 
+    Additionally, this document contains the instructions for using the tools provided for implementing the  DMCA notice & takedown policy.
+    <br><br>
+    <i>Workflow For Implementing</i>
+    <br>
+    The site administrator is to recieve copyright requests and dispute claims via email. 
+    It is required that the site administrator log ALL requests and disputes onto this web application.
+    Once the log has been made, the site administrator should now consider taking action based on the request.
+    The site administrator should view the most current version of the DMCA notice and takedown policy.
+    If the site administrator is confident that the request/dispute is valid and in accordance with the site's curent DMCA notice and takedown policy,
+    then the site administrator should proceed to using the appropriate tool outlined in the section below. If it is a valid takedown request, the site administrator should "hide" the review and
+    a notice should be sent via email to the review creator and logged on this web application.
+    If it is a valid dispute request, the site administrator should "unhide" the review. If the site administrator instead believes that the request/dispute is invalid and not in accordance 
+    with the site's current DMCA notice and takedown policy,
+    then the site administrator should proceed to responding to the user's email and notify them of the rejection and the reasons for declining the request/claim/dispute.
+    <br><br>
+    <i>Tools For Implementing</i>
+    <br>
+    There are three mechanisms that are provided to log requests, notices, and disputes. These tools are located on the "Manage Users" link on the top of the web page.
+    The first mechanism is provided to record any takedown request of a review that is recieved. Click "log request" on the relevant review, then enter the "date request received" and click "submit".
+    The second mechanism is provided to record any notices of a review that are sent. Click "log notice" on the relevant review, then enter the "date notice sent" and click "submit".
+    The third mechanism is provided to record any dispute of a review that is recieved. Click "log dispute" on the relevant review, then enter the "date dispute received" and click "submit".
+
+    Additionally, there is the "toggle hidden" tool which allows the administrator to hide or unhide the relevant review. If "clicked" to make the review hidden, this review cannot be seen by any users (except administrators).
+    Clicking the "toggle hidden" tool again will unhide the review (which should be done in the event of a successful dispute) and the review will be visible by all users again.
+    </p>
 </div>

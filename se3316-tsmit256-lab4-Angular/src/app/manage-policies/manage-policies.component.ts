@@ -10,12 +10,16 @@ import { PolicyService } from '../_services/policy.service';
 export class ManagePoliciesComponent implements OnInit {
   spForm: FormGroup;
   dmcaForm: FormGroup;
+  aupForm: FormGroup;
   
   constructor(private formBuilder: FormBuilder,
               private policyService: PolicyService) { }
 
   ngOnInit(): void {
     this.spForm = this.formBuilder.group({
+      message: ['', []]
+    });
+    this.aupForm = this.formBuilder.group({
       message: ['', []]
     });
     this.dmcaForm = this.formBuilder.group({
@@ -28,6 +32,12 @@ export class ManagePoliciesComponent implements OnInit {
         this.spf.message.setValue(data.descr);
       });  
 
+    //Set the initial acceptable use policy to be what is currently recorded in database
+    this.policyService.getAupPolicy().subscribe(
+      data => {
+        this.aupf.message.setValue(data.descr);
+      });  
+
     //Set the initial DMCA policy to be what is currently recorded in database
     this.policyService.getDmcaPolicy().subscribe(
       data => {
@@ -38,11 +48,28 @@ export class ManagePoliciesComponent implements OnInit {
   // convenience getter for easy access to form fields
   get spf() { return this.spForm.controls; }
   get dmcaf() { return this.dmcaForm.controls; }
+  get aupf() {return this.aupForm.controls; }
 
   updateSpPolicy(){
     var message = this.spf.message.value;
 
     var result = this.policyService.updateSpPolicy(message);
+
+    if(result){
+      result.subscribe(
+        data => {
+          alert("Updated!");
+        },
+        error => {
+          alert(error);
+        });
+    }
+  }
+
+  updateAupPolicy(){
+    var message = this.aupf.message.value;
+
+    var result = this.policyService.updateAupPolicy(message);
 
     if(result){
       result.subscribe(

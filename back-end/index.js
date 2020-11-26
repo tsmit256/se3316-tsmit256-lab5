@@ -20,11 +20,13 @@ const db = low(adapter);
 
 app.use(express.json()); //Middleware to enable parsing of json objects
 
+
 // Middleware to do logging
 app.use((req,res,next) => { //for all routes
     console.log(req.method + " request for " + req.url);
     next(); //keep going
 });
+
 
 app.use(['/api/open/schedules', '/api/secure/schedules'], (req,res,next) =>{ //for routes including anything to do with schedules
     var test = db.get('schedules').value();
@@ -36,16 +38,18 @@ app.use(['/api/open/schedules', '/api/secure/schedules'], (req,res,next) =>{ //f
     next(); //keep going
 });
 
+
 //for routes including anything to do with policies
 app.use(['/api/open/policies', '/api/admin/policies'], (req, res, next) => {
     var test = db.get('policies').value();
 
     if(!test){ //If the policies component of the database does not exist, then create a default
-        db.defaults({ policies: [{name: "sp", descr: ""}, {name: "dmca", descr: ""}] }).write(); //Add default policies array
+        db.defaults({ policies: [{name: "sp", descr: ""}, {name: "aup", descr: ""}, {name: "dmca", descr: ""}] }).write(); //Add default policies array
     }
     
     next(); //keep going
 })
+
 
 app.use('/api/open/users', (req,res,next) => { //for routes anything to do with users
     var test = db.get('users').value();
@@ -61,6 +65,17 @@ app.use('/api/open/users', (req,res,next) => { //for routes anything to do with 
 
     next(); //keep going
 });
+
+
+app.use('/api/admin/logs', (req, res, next) => {//for routes anything to do with logs
+    var test = db.get('logs').value();
+
+    if(!test){ //If the logs component of database doesn't exist, then create default
+        db.defaults({ logs: []}).write(); //add default logs array
+    }
+    next();
+});
+
 
 app.use('/', express.static('../se3316-tsmit256-lab4-Angular/dist/se3316-tsmit256-lab4-Angular')); //used to serve front-end static files from static folder
 
@@ -103,6 +118,7 @@ app.use(['/api/secure', '/api/admin'], (req, res, next) => {
     
     next();
 })
+
 
 //for all routes related to reviews
 app.use('/api/secure/reviews', (req,res,next) => {
@@ -781,7 +797,7 @@ app.post('/api/admin/activation', (req, res) => {
 app.route('/api/open/policies/:policyName')
     .get((req,res) => {
     const policyName = req.params.policyName;
-    if(policyName != "sp" && policyName != "dmca"){
+    if(policyName != "sp" && policyName != "dmca" && policyName != "aup"){
         return res.status('404').send("This is not a valid policyName");
     }
 
@@ -795,7 +811,7 @@ app.route('/api/open/policies/:policyName')
 app.post('/api/admin/policies/:policyName', (req,res) => {
     console.log("HEY1111");
     const policyName = req.params.policyName;
-    if(policyName != "sp" && policyName != "dmca"){
+    if(policyName != "sp" && policyName != "dmca" && policyName != "aup"){
         return res.status('404').send("This is not a valid policyName");
     }
     
@@ -805,6 +821,21 @@ app.post('/api/admin/policies/:policyName', (req,res) => {
     db.get('policies').find({name: policyName}).assign({descr: newDescr_clean}).write();
     
     res.send({descr: newDescr_clean});
+});
+
+app.route('/api/admin/logs')
+  .post((req, res) => {
+    const typeReq = validateAndSanitize.cleanTypeReq(res, req.body.typeReq);
+    const date = validateAndSanitize.cleanDate(res, req.body.date);
+    const reviewId = validateAndSanitize.cleanId(res, req.body.id);
+
+    db.get('logs').push({typeReq: typeReq, date: date, reviewId: reviewId}).write();
+
+    res.send({typeReq: typeReq, date: date, reviewId: reviewId});
+})
+  .get((req, res) => {
+    const logs = db.get('logs').value();
+    res.send(logs);
 });
 
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Form, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CourseReview } from '../_models/courseReview';
 import { AdminService } from '../_services/admin.service';
 
@@ -14,6 +14,12 @@ export class ManageUsersComponent implements OnInit {
   submitted = false;
   activateForm: FormGroup;
   aSubmitted = false;
+  rfSubmitted = false;
+  nfSubmitted = false;
+  dfSubmitted = false;
+  logReqForm: FormGroup;
+  logNotForm: FormGroup;
+  logDisForm: FormGroup;
 
   constructor(private adminService: AdminService,
               private formBuilder: FormBuilder) { }
@@ -28,11 +34,28 @@ export class ManageUsersComponent implements OnInit {
     this.activateForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]]
     });
+
+    this.logReqForm = this.formBuilder.group({
+      date: ['', [Validators.required, Validators.maxLength(100)]]
+    });
+
+    this.logNotForm = this.formBuilder.group({
+      date: ['', [Validators.required, Validators.maxLength(100)]]
+    });
+
+    this.logDisForm = this.formBuilder.group({
+      date: ['', [Validators.required, Validators.maxLength(100)]]
+    });
+
+    this.getAllLogs();
   }
 
   // convenience getter for easy access to form fields
   get f() { return this.grantForm.controls; }
   get af() { return this.activateForm.controls; }
+  get rf() { return this.logReqForm.controls; }
+  get nf() { return this.logNotForm.controls; }
+  get df() { return this.logDisForm.controls; }
 
   grantPrivilege(){
     this.submitted = true;
@@ -116,6 +139,73 @@ export class ManageUsersComponent implements OnInit {
         error => {
           alert(error);
         });
+    }
+  }
+
+  getAllLogs(){
+    this.adminService.getAllLogs().subscribe(
+      logs => {
+        //Add the logs to the respective review
+        for(var r in this.reviews){
+          this.reviews[r].logs = [];
+          //check if any of the logs are for this review
+          for(var l in logs){
+            if(this.reviews[r].id == logs[l].reviewId){
+              this.reviews[r].logs.push(logs[l]);
+            }
+          }
+        }
+      },
+      error => {
+        alert(error);
+      }
+    )
+  }
+
+  logReq(typeReq: string, id: number){
+    let date;
+    if(typeReq == "request"){
+      this.rfSubmitted = true;
+
+      // stop here if form is invalid
+      if (this.logReqForm.invalid) {
+        return;
+      }  
+      //get the date from input
+      date = this.rf.date.value;
+    }
+    else if(typeReq == "notice"){
+      this.nfSubmitted = true;
+
+      // stop here if form is invalid
+      if (this.logNotForm.invalid) {
+        return;
+      }
+      //get the date from input
+      date = this.nf.date.value;
+    }
+    else{
+      this.dfSubmitted = true;
+
+      // stop here if form is invalid
+      if (this.logDisForm.invalid) {
+        return;
+      }
+      //get the date from input
+      date = this.df.date.value;
+    }
+    
+    let result = this.adminService.logReq(typeReq, date, id);
+
+    if(result){
+      result.subscribe(
+        data => {
+          //add the new log to the review
+          this.reviews.filter(obj => {return obj.id == data.reviewId})[0].logs.push(data);
+      },
+      error => {
+        alert(error);
+      });
     }
   }
 

@@ -9,5 +9,11 @@ export interface CourseReview{
     }>;
     hidden: boolean;
     id: number;
+    logs?: Log[]
+}
 
+export interface Log{
+    typeReq: string,
+    date: string,
+    reviewId: number
 }

@@ -40,6 +40,50 @@
         <p>Hidden: {{review.hidden}}
             <button (click)="toggleHidden(review.id)">Toggle Hidden</button>
         </p>
+        <form [formGroup]="logReqForm" (ngSubmit)="logReq('request', review.id)">
+            <div class="form-group">
+                <label class="inputLabel" for="date">Date Request Recieved:</label>
+                <input type="text" formControlName="date" class="form-control" [ngClass]="{ 'is-invalid': rfSubmitted && rf.date.errors }" />
+                <div *ngIf="rfSubmitted && rf.date.errors" class="invalid-feedback">
+                    <div *ngIf="rf.date.errors.required">Date is required</div>
+                    <div *ngIf="rf.date.errors.maxlength">Date should be less than 100 characters</div>
+                </div>
+            </div>
+        <button class="btn btn-primary">
+            Log Request
+        </button>
+      </form>
+
+      <form [formGroup]="logNotForm" (ngSubmit)="logReq('notice', review.id)">
+        <div class="form-group">
+            <label class="inputLabel" for="date">Date Notice Sent:</label>
+            <input type="text" formControlName="date" class="form-control" [ngClass]="{ 'is-invalid': nfSubmitted && nf.date.errors }" />
+            <div *ngIf="nfSubmitted && nf.date.errors" class="invalid-feedback">
+                <div *ngIf="nf.date.errors.required">Date is required</div>
+                <div *ngIf="nf.date.errors.maxlength">Date should be less than 100 characters</div>
+            </div>
+        </div>
+        <button class="btn btn-primary">
+            Log Notice
+        </button>
+      </form>
+
+      <form [formGroup]="logDisForm" (ngSubmit)="logReq('dispute', review.id)">
+        <div class="form-group">
+            <label class="inputLabel" for="date">Date Dispute Recieved:</label>
+            <input type="text" formControlName="date" class="form-control" [ngClass]="{ 'is-invalid': dfSubmitted && df.date.errors }" />
+            <div *ngIf="dfSubmitted && df.date.errors" class="invalid-feedback">
+                <div *ngIf="df.date.errors.required">Date is required</div>
+                <div *ngIf="df.date.errors.maxlength">Date should be less than 100 characters</div>
+            </div>
+        </div>
+        <button class="btn btn-primary">
+            Log Dispute
+        </button>
+    </form>
        
+        <div *ngFor = "let log of review.logs">
+            {{log.typeReq}} logged on {{log.date}}
+        </div>
     </div>
 </div>
