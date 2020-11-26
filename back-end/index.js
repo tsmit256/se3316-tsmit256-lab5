@@ -541,7 +541,7 @@ app.post('/api/open/users/authenticate', (req,res) => {
         return res.status('403').send('Your account is marked as deactivated. Please contact site administrator.');
     }
 
-    var jwtBearerToken = issueJwtToken(user);
+    var jwtBearerToken = issueJwtToken(user.value());
 
     var role = user.get('role').value()
 
@@ -567,9 +567,11 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
         });
         payload = ticket.getPayload();
         if(payload){
+            console.log("YOOO");
             resolve(payload);
         }
         else{
+            console.log("UH OH");
             reject("invalid token");
         }
     }
@@ -578,14 +580,9 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
     const verifyToken = new Promise(function(resolve, reject){
         verify(resolve, reject)
     }).then(data => {
-
-        var user = db.get('users')
-        .find({id: payload['sub']});
-    
-        const email = user
-        .get('email')
-        .value();
-
+        var email = db.get('users').find({id: payload['sub']}).get('email').value();
+        var deactivatedStatus, jwtBearerToken, role;
+        console.log("A");
         //Test if there is an email associated with this user
         if(!email){
             //The user does not yet exist so create new information
@@ -601,27 +598,35 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
             db.get('users')
             .push(user)
             .write();
+
+            deactivatedStatus = user.deactivated;
+            if(deactivatedStatus){
+                //Return message if deactivated
+                return res.status('403').send('Your account is marked as deactivated. Please contact site administrator.');
+            }
+            console.log("B");
+            jwtBearerToken = issueJwtToken(user);
+            role = user.role;
+            console.log("C");
+
         }
-
-        const deactivatedStatus = user.get('deactivated').value();
-
-        if(deactivatedStatus){
-            //Return message if deactivated
-            return res.status('403').send('Your account is marked as deactivated. Please contact site administrator.');
+        else{
+            deactivatedStatus = db.get('users').find({id: payload['sub']}).get('deactivated').value();
+            console.log("D");
+            if(deactivatedStatus){
+                //Return message if deactivated
+                return res.status('403').send('Your account is marked as deactivated. Please contact site administrator.');
+            }
+            console.log("E");
+            jwtBearerToken = issueJwtToken(db.get('users').find({id: payload['sub']}).value());
+            role = db.get('users').find({id: payload['sub']}).value().role;
+            console.log("F");
         }
-    
-        var jwtBearerToken = issueJwtToken(user);
-    
-        var role = user.get('role').value()
-
-        // set it in the HTTP Response body
-        res.status(200).json({
-            token: jwtBearerToken,
-            role: role
-        }); 
+        console.log("G");
+        // send token and role back
+        res.status(200).send({token: jwtBearerToken, role: role}); 
     }).catch(err => {
-        console.error;
-        res.status('500').send('Google verification process failed')
+        res.status('500').send('Google verification process has failed')
     });
 });
 
@@ -851,22 +856,13 @@ app.listen(port, () => {
 //The remaining part of this document is helper functions
 
  function issueJwtToken(user){
-    const userId = user
-    .get('id')
-    .value();
-
-    const name = user
-    .get('name')
-    .value();
-
-    const role = user
-    .get('role')
-    .value();
+    const userId = user.id;
+    const name = user.name;
+    const role = user.role;
 
     let payload = {name: name, role: role, id: userId};
 
     const jwtBearerToken = jwt.sign(payload, ACCESS_TOKEN_SECRET, {
-        
         expiresIn: ACCESS_TOKEN_LIFE
     });
 

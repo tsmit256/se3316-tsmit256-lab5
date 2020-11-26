@@ -34,7 +34,7 @@ const routes: Routes = [
   { path: 'manage-users', component: ManageUsersComponent, canActivate: [AuthGuardAdmin]},
   { path: 'manage-policies', component: ManagePoliciesComponent, canActivate: [AuthGuardAdmin]},
   { path: 'policies', component: PoliciesComponent},
-  { path: '**', redirectTo: '/subjects'}
+  { path: '**', redirectTo: '/login'}
 ];
 
 @NgModule({

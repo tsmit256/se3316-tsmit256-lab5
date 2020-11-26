@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -21,11 +21,15 @@ export class AuthenticationService {
         return this.currentUserSubject.value;
     }
 
+    httpOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+      };
+
     login(email: string, password: string) {
         if(!this.validateService.isValidEmail(email) || !this.validateService.isValidPassword(password)){
           return;
         }
-        return this.http.post<any>(`api/open/users/authenticate`, { email, password })
+        return this.http.post<any>(`api/open/users/authenticate`, { email, password }, this.httpOptions)
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
                 localStorage.setItem('currentUser', JSON.stringify(user));
@@ -46,7 +50,7 @@ export class AuthenticationService {
           !this.validateService.isValidName(name)){
           return;
         }
-        return this.http.post<any>(`api/open/users/newAccount`, {name, email, password});
+        return this.http.post<any>(`api/open/users/newAccount`, {name, email, password}, this.httpOptions);
     }
 
     verifyNewAccnt(link: string){      
@@ -54,7 +58,7 @@ export class AuthenticationService {
     }
 
     sendGoogleTokenToApi(token: string){
-      return this.http.post<any>('api/open/users/googleAuthenticate', {token})
+      return this.http.post<any>('api/open/users/googleAuthenticate', {token}, this.httpOptions)
         .pipe(map(user => {
           // store user details and jwt token in local storage to keep user logged in between page refreshes
           localStorage.setItem('currentUser', JSON.stringify(user));
