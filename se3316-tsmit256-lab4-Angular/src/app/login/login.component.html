@@ -71,7 +71,10 @@
                 <div *ngIf="registerError" class="alert alert-danger mt-3 mb-0">{{registerError}}</div>
 
                 <div *ngIf="verifyLink">Please visit the following link to confirm account: 
-                    <a href="http://{{verifyLink}}">click here</a>
+                    <nav>
+                        <a routerLink="/verification/{{verifyLink}}">Click Here</a>
+                    </nav>
+                    
 
                 </div>
             </form>
