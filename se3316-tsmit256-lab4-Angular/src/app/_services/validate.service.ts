@@ -131,7 +131,7 @@ export class ValidateService {
     }
 
     if(/<>/.test(descr)){
-      alert('Please remove <> characters from review message');
+      alert('Please remove <> characters from message');
       return false;
     }
     return true;

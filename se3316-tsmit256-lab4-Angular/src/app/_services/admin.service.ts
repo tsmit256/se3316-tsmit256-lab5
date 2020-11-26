@@ -73,8 +73,8 @@ export class AdminService {
   }
 
   //Log a request/notice/dispute
-  logReq(typeReq: string, date: string, id: number): Observable<any>{   
-    return this.http.post(`api/admin/logs`, {typeReq: typeReq, date: date, id: id}, this.httpOptions).pipe(
+  logReq(typeReq: string, date: string, id: number, descr: string): Observable<any>{   
+    return this.http.post(`api/admin/logs`, {typeReq: typeReq, date: date, id: id, descr: descr}, this.httpOptions).pipe(
       tap(() => this.log(`added log`)),
       catchError(this.handleError<any>('logReq'))
     );

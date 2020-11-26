@@ -48,6 +48,12 @@
                     <div *ngIf="rf.date.errors.required">Date is required</div>
                     <div *ngIf="rf.date.errors.maxlength">Date should be less than 100 characters</div>
                 </div>
+                <label class="inputLabel" for="descr">Request Description:</label>
+                <input type="text" formControlName="descr" class="form-control" [ngClass]="{ 'is-invalid': rfSubmitted && rf.descr.errors }" />
+                <div *ngIf="rfSubmitted && rf.descr.errors" class="invalid-feedback">
+                    <div *ngIf="rf.descr.errors.required">Description is required</div>
+                    <div *ngIf="rf.descr.errors.maxlength">Description should be less than 500 characters</div>
+                </div>
             </div>
         <button class="btn btn-primary">
             Log Request
@@ -61,6 +67,12 @@
             <div *ngIf="nfSubmitted && nf.date.errors" class="invalid-feedback">
                 <div *ngIf="nf.date.errors.required">Date is required</div>
                 <div *ngIf="nf.date.errors.maxlength">Date should be less than 100 characters</div>
+            </div>
+            <label class="inputLabel" for="descr">Notice Description:</label>
+            <input type="text" formControlName="descr" class="form-control" [ngClass]="{ 'is-invalid': nfSubmitted && nf.descr.errors }" />
+            <div *ngIf="nfSubmitted && nf.descr.errors" class="invalid-feedback">
+                <div *ngIf="nf.descr.errors.required">Description is required</div>
+                <div *ngIf="nf.descr.errors.maxlength">Description should be less than 500 characters</div>
             </div>
         </div>
         <button class="btn btn-primary">
@@ -76,6 +88,12 @@
                 <div *ngIf="df.date.errors.required">Date is required</div>
                 <div *ngIf="df.date.errors.maxlength">Date should be less than 100 characters</div>
             </div>
+            <label class="inputLabel" for="descr">Dispute Description:</label>
+            <input type="text" formControlName="descr" class="form-control" [ngClass]="{ 'is-invalid': dfSubmitted && df.descr.errors }" />
+            <div *ngIf="dfSubmitted && df.descr.errors" class="invalid-feedback">
+                <div *ngIf="df.descr.errors.required">Description is required</div>
+                <div *ngIf="df.descr.errors.maxlength">Description should be less than 500 characters</div>
+            </div>
         </div>
         <button class="btn btn-primary">
             Log Dispute
@@ -83,7 +101,7 @@
     </form>
        
         <div *ngFor = "let log of review.logs">
-            {{log.typeReq}} logged on {{log.date}}
+            {{log.typeReq}} logged on {{log.date}}: {{log.descr}}
         </div>
     </div>
 </div>

@@ -13,7 +13,8 @@ export interface CourseReview{
 }
 
 export interface Log{
-    typeReq: string,
-    date: string,
-    reviewId: number
+    typeReq: string;
+    date: string;
+    reviewId: number;
+    descr: string;
 }

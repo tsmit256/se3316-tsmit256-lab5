@@ -5,7 +5,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { SubjectsComponent } from './subjects/subjects.component';
 import { MessagesComponent } from './messages/messages.component';
-import { ClassNamesComponent } from './class-names/class-names.component';
 import { AppRoutingModule } from './app-routing.module';
 import { CourseCodesComponent } from './course-codes/course-codes.component';
 import { CourseComponentsComponent } from './course-components/course-components.component';
@@ -16,7 +15,7 @@ import { JwtInterceptor } from './_helpers/jwt.interceptor';
 import { ErrorInterceptor } from './_helpers/error.interceptor';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AccntVerificationComponent } from './accnt-verification/accnt-verification.component';
-import { GoogleLoginProvider, SocialAuthService, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
+import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
 import { KeywordSearchComponent } from './keyword-search/keyword-search.component';
 import { PublicCourseListsComponent } from './public-course-lists/public-course-lists.component';
 import { SchedDetailComponent } from './sched-detail/sched-detail.component';
@@ -30,7 +29,6 @@ import { PoliciesComponent } from './policies/policies.component';
     AppComponent,
     SubjectsComponent,
     MessagesComponent,
-    ClassNamesComponent,
     CourseCodesComponent,
     CourseComponentsComponent,
     TimetableResultsComponent,

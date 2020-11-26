@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SubjectsComponent } from './subjects/subjects.component';
-import { ClassNamesComponent } from './class-names/class-names.component';
 import { CourseCodesComponent } from './course-codes/course-codes.component';
 import { CourseComponentsComponent } from './course-components/course-components.component';
 import { TimetableResultsComponent } from './timetable-results/timetable-results.component';
@@ -18,7 +17,6 @@ import { PoliciesComponent } from './policies/policies.component';
 
 const routes: Routes = [
   { path: 'subjects', component: SubjectsComponent},
-  { path: 'class-names', component: ClassNamesComponent, canActivate: [AuthGuard]},
   { path: 'course-codes/:subjectCode', component: CourseCodesComponent},
   { path: 'course-components/:pair', component: CourseComponentsComponent},
   { path: 'timetable-results/:subjectCode', component: TimetableResultsComponent},

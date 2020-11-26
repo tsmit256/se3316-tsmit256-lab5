@@ -10,7 +10,6 @@ import { MessageService } from './message.service';
 })
 export class SubjectService {
   private subjectsUrl = 'api/open/subjects';
-  private classNamesUrl = 'api/open/classNames';
 
   constructor(
     private http: HttpClient,
@@ -25,16 +24,6 @@ export class SubjectService {
         catchError(this.handleError<Subject[]>('getSubjects', []))
       );
   }
-
-    /** GET classNames from the server */
-    getClassNames(): Observable<ClassName[]> {
-      return this.http.get<ClassName[]>(this.classNamesUrl)
-        .pipe(
-          tap(_ => this.log('fetched classNames')),
-          catchError(this.handleError<ClassName[]>('getClassNames', []))
-        );
-    }
-
 
   /** Log a SubjectService message with the MessageService */
   private log(message: string) {

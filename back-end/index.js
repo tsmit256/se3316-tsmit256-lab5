@@ -830,10 +830,11 @@ app.route('/api/admin/logs')
     const typeReq = validateAndSanitize.cleanTypeReq(res, req.body.typeReq);
     const date = validateAndSanitize.cleanDate(res, req.body.date);
     const reviewId = validateAndSanitize.cleanId(res, req.body.id);
+    const descr = validateAndSanitize.cleanReviewDescription(res, req.body.descr);
 
-    db.get('logs').push({typeReq: typeReq, date: date, reviewId: reviewId}).write();
+    db.get('logs').push({typeReq: typeReq, date: date, reviewId: reviewId, descr: descr}).write();
 
-    res.send({typeReq: typeReq, date: date, reviewId: reviewId});
+    res.send({typeReq: typeReq, date: date, reviewId: reviewId, descr: descr});
 })
   .get((req, res) => {
     const logs = db.get('logs').value();

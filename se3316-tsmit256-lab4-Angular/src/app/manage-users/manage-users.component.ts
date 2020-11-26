@@ -36,15 +36,18 @@ export class ManageUsersComponent implements OnInit {
     });
 
     this.logReqForm = this.formBuilder.group({
-      date: ['', [Validators.required, Validators.maxLength(100)]]
+      date: ['', [Validators.required, Validators.maxLength(100)]],
+      descr: ['', [Validators.required, Validators.maxLength(500)]]
     });
 
     this.logNotForm = this.formBuilder.group({
-      date: ['', [Validators.required, Validators.maxLength(100)]]
+      date: ['', [Validators.required, Validators.maxLength(100)]],
+      descr: ['', [Validators.required, Validators.maxLength(500)]]
     });
 
     this.logDisForm = this.formBuilder.group({
-      date: ['', [Validators.required, Validators.maxLength(100)]]
+      date: ['', [Validators.required, Validators.maxLength(100)]],
+      descr: ['', [Validators.required, Validators.maxLength(500)]]
     });
 
     this.getAllLogs();
@@ -163,7 +166,7 @@ export class ManageUsersComponent implements OnInit {
   }
 
   logReq(typeReq: string, id: number){
-    let date;
+    let date, descr;
     if(typeReq == "request"){
       this.rfSubmitted = true;
 
@@ -171,8 +174,9 @@ export class ManageUsersComponent implements OnInit {
       if (this.logReqForm.invalid) {
         return;
       }  
-      //get the date from input
+      //get the date and descr from input
       date = this.rf.date.value;
+      descr = this.rf.descr.value;
     }
     else if(typeReq == "notice"){
       this.nfSubmitted = true;
@@ -181,8 +185,9 @@ export class ManageUsersComponent implements OnInit {
       if (this.logNotForm.invalid) {
         return;
       }
-      //get the date from input
+      //get the date and descr from input
       date = this.nf.date.value;
+      descr = this.nf.descr.value;
     }
     else{
       this.dfSubmitted = true;
@@ -191,11 +196,12 @@ export class ManageUsersComponent implements OnInit {
       if (this.logDisForm.invalid) {
         return;
       }
-      //get the date from input
+      //get the date and descr from input
       date = this.df.date.value;
+      descr = this.df.descr.value;
     }
     
-    let result = this.adminService.logReq(typeReq, date, id);
+    let result = this.adminService.logReq(typeReq, date, id, descr);
 
     if(result){
       result.subscribe(
