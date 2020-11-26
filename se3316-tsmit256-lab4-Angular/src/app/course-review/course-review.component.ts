@@ -25,6 +25,9 @@ export class CourseReviewComponent implements OnInit {
       message: ['', [Validators.required, Validators.maxLength(500)]]
     });
 
+    this.courseCode = this.route.snapshot.paramMap.get('courseCode');
+    this.subjectCode = this.route.snapshot.paramMap.get('subjectCode');
+
   }
 
   // convenience getter for easy access to form fields
@@ -40,9 +43,6 @@ export class CourseReviewComponent implements OnInit {
 
     //get the message from input
     let message = this.f.message.value;
-
-    this.courseCode = this.route.snapshot.paramMap.get('courseCode');
-    this.subjectCode = this.route.snapshot.paramMap.get('subjectCode');
 
     let result = this.reviewService.addReview({subjectCode: this.subjectCode, catalog_nbr: this.courseCode} as Pair, message);
 

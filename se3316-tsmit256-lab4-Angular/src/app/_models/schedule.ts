@@ -11,6 +11,7 @@ export interface Schedule{
     description?: string
     public: boolean;
     showDetail?: boolean;
+    deleteConfirm?: boolean;
 } 
 
 export interface Pair{

@@ -44,7 +44,7 @@
         </tr>
     </table>
 
-    <div *ngIf="course.showDetail">
+    <div *ngIf="course.showDetail && course.reviews.length">
       <h2>Reviews</h2>
       <div *ngFor="let review of course.reviews">
           <h4 *ngIf="!review.hidden" class="review">{{review.creatorName}} on {{review.lastModified | date:'medium'}}: <span class="reviewText">{{review.message}}</span></h4>

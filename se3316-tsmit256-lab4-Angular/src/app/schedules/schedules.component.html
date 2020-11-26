@@ -36,9 +36,9 @@
         <tr>
             <th *ngIf="fromSavePairAction === true">Save Pair To Schedule</th>
             <th>Expand</th>
-            <th>Delete</th>
-            <th>Edit</th>
-            <th>Display</th>
+            <th *ngIf="!fromSavePairAction">Delete</th>
+            <th *ngIf="!fromSavePairAction">Edit</th>
+            <th *ngIf="!fromSavePairAction">Display</th>
             <th>Last Modified</th>
             <th>Schedule Name</th>
             <th>Creator Name</th>
@@ -54,16 +54,16 @@
             <td>
                 <button (click)="toggleExpand(schedule)">Toggle Expand</button>
             </td>
-            <td>
-                <button *ngIf="!deleteConfirm" (click)="deleteConfirm = true">Delete</button>
+            <td *ngIf="!fromSavePairAction">
+                <button *ngIf="!schedule.deleteConfirm" (click)="schedule.deleteConfirm = true">Delete</button>
                 <p></p>
-                <button *ngIf="deleteConfirm" (click)="delete(schedule)">Confirm </button>
-                <button *ngIf="deleteConfirm" (click)="deleteConfirm = false"> Cancel</button>
+                <button *ngIf="schedule.deleteConfirm" (click)="delete(schedule)">Confirm </button>
+                <button *ngIf="schedule.deleteConfirm" (click)="schedule.deleteConfirm = false"> Cancel</button>
             </td>
-            <td>
+            <td *ngIf="!fromSavePairAction">
                 <button  [class.selected]="schedule === selectedSchedule" (click)="onSelect(schedule)">Edit</button>
             </td>
-            <td>
+            <td *ngIf="!fromSavePairAction">
                 <nav>
                     <a routerLink="/{{schedule.name}}/timetable-results">Get timetable data</a>
                 </nav>
@@ -86,9 +86,11 @@
     
 </div>
 
-<div *ngIf="selectedSchedule">
+<div *ngIf="!fromSavePairAction && selectedSchedule">
     <app-sched-detail [sched]="selectedSchedule"></app-sched-detail> 
 </div>
 
 <!--Display the public course lists as well-->
-<app-public-course-lists></app-public-course-lists>
+<div *ngIf="!fromSavePairAction">
+    <app-public-course-lists></app-public-course-lists>
+</div>

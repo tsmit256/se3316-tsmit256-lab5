@@ -365,7 +365,7 @@ app.route('/api/secure/schedules/:scheduleName')
     const name_dirty = req.params.scheduleName;
     const name_clean = validateAndSanitize.cleanScheduleName(res,name_dirty);
 
-    const schedule = db.get('schedules')
+    var schedule = db.get('schedules')
       .find({name: name_clean})
       .value();
 
@@ -422,6 +422,8 @@ app.route('/api/secure/schedules/:scheduleName')
       .get('pairs')
       .push(pair) //add the new pair to the pairs
       .write();
+
+    schedule = db.get('schedules').find({name: name_clean}).value();
 
     res.send(schedule);    
 })

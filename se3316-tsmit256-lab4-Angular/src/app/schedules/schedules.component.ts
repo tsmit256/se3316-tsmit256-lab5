@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PublicSchedule, Schedule } from '../_models/schedule';
+import { Schedule } from '../_models/schedule';
 import { ScheduleService } from '../_services/schedule.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -17,7 +17,6 @@ export class SchedulesComponent implements OnInit {
   createSchedForm: FormGroup;
   submitted = false;
   createError = '';
-  deleteConfirm = false;
 
   constructor(
     private scheduleService: ScheduleService,
@@ -66,6 +65,7 @@ export class SchedulesComponent implements OnInit {
           //Set all showdetails to be false initially (only show glance at beginning)
           for(let i=0; i<this.schedules.length; i++){
             this.schedules[i].showDetail = false;
+            this.schedules[i].deleteConfirm = false;
         }
         });
     }
@@ -83,7 +83,7 @@ export class SchedulesComponent implements OnInit {
   selectedSchedule: Schedule;
   onSelect(schedule: Schedule): void {
     this.selectedSchedule = schedule;
-    this.deleteConfirm = false;
+    schedule.deleteConfirm = false;
   }
 
   add(): void {
@@ -130,8 +130,15 @@ export class SchedulesComponent implements OnInit {
     let result = this.scheduleService.savePairToSched(this.subjectCode, this.courseCode, schedName);
 
     if(result){
-      result.subscribe();
-      alert("pair saved!");
+      result.subscribe(
+        data => {
+          for(var s in this.schedules){
+            if(this.schedules[s].name == schedName)
+              this.schedules[s] = data;
+          };
+        }
+      );
+      
     }
   }
 }
