@@ -27,6 +27,8 @@ app.use((req,res,next) => { //for all routes
     next(); //keep going
 });
 
+app.use('/', express.static('../se3316-tsmit256-lab4-Angular/dist/se3316-tsmit256-lab4-Angular')); //used to serve front-end static files from static folder
+
 
 app.use(['/api/open/schedules', '/api/secure/schedules'], (req,res,next) =>{ //for routes including anything to do with schedules
     var test = db.get('schedules').value();
@@ -75,10 +77,6 @@ app.use('/api/admin/logs', (req, res, next) => {//for routes anything to do with
     }
     next();
 });
-
-
-app.use('/', express.static('../se3316-tsmit256-lab4-Angular/dist/se3316-tsmit256-lab4-Angular')); //used to serve front-end static files from static folder
-
 
 //Make sure there is a valid token for any request trying to access secured content
 app.use(['/api/secure', '/api/admin'], (req, res, next) => {
