@@ -15,7 +15,6 @@ import { JwtInterceptor } from './_helpers/jwt.interceptor';
 import { ErrorInterceptor } from './_helpers/error.interceptor';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AccntVerificationComponent } from './accnt-verification/accnt-verification.component';
-import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
 import { KeywordSearchComponent } from './keyword-search/keyword-search.component';
 import { PublicCourseListsComponent } from './public-course-lists/public-course-lists.component';
 import { SchedDetailComponent } from './sched-detail/sched-detail.component';
@@ -48,24 +47,10 @@ import { PoliciesComponent } from './policies/policies.component';
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    SocialLoginModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-    { provide: 'SocialAuthServiceConfig',
-      useValue: {
-        autoLogin: false,
-        providers: [
-          {
-            id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider(
-              '377942630150-bnac8vub3oso7hau5b8h3ap6004mh4kq.apps.googleusercontent.com'
-            )
-          }
-        ]
-      } as SocialAuthServiceConfig
-    }
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
 })
