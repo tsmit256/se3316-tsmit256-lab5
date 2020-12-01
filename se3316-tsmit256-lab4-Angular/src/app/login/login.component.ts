@@ -68,8 +68,16 @@ export class LoginComponent implements OnInit {
       if(result){ //Don't continue if it doesn't return a value
         result.subscribe(
             data => {
-                this.loginError = "";
-                this.router.navigate([this.returnUrl]);
+                if(data.token){
+                  this.loginError = "";
+                  this.router.navigate([this.returnUrl]);
+                }
+                //otherwise it is a resend of verification link
+                else{
+                  alert("You still have not verified your account. The link has been resent.")
+                  this.verifyLink = data.link;
+                }
+                
             },
             error => {
                 this.loginError = error.error;

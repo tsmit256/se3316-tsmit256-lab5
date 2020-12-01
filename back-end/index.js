@@ -525,7 +525,15 @@ app.post('/api/open/users/authenticate', (req,res) => {
       .value();
 
     if(!existingPassword){
-        return res.status(404).send('A user account with that email does not exist');
+        //check if it is waiting to be confirmed
+        const toBeConfirmed = db.get('usersToConfirm').find({email: email_clean}).get('link').value();
+
+        if(!toBeConfirmed){
+            return res.status(404).send('A user account with that email does not exist');
+        }
+        else{
+            return res.send({link: toBeConfirmed});
+        }
     }
 
     if(!comparePasswords(password_clean, existingPassword)){

@@ -32,9 +32,12 @@ export class AuthenticationService {
         return this.http.post<any>(`api/open/users/authenticate`, { email, password }, this.httpOptions)
             .pipe(map(user => {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                this.currentUserSubject.next(user);
-                return user;
+                if(user.token){
+                  localStorage.setItem('currentUser', JSON.stringify(user));
+                  this.currentUserSubject.next(user);
+                }
+                //if it didn't return a token, must be resend of verification link
+                return user;                
             }));
     }
 
