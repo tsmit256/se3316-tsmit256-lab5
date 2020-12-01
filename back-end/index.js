@@ -565,11 +565,9 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
         });
         payload = ticket.getPayload();
         if(payload){
-            console.log("YOOO");
             resolve(payload);
         }
         else{
-            console.log("UH OH");
             reject("invalid token");
         }
     }
@@ -580,7 +578,6 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
     }).then(data => {
         var email = db.get('users').find({id: payload['sub']}).get('email').value();
         var deactivatedStatus, jwtBearerToken, role;
-        console.log("A");
         //Test if there is an email associated with this user
         if(!email){
             //The user does not yet exist so create new information
@@ -602,25 +599,20 @@ app.post('/api/open/users/googleAuthenticate', (req, res) => {
                 //Return message if deactivated
                 return res.status(403).send('Your account is marked as deactivated. Please contact site administrator.');
             }
-            console.log("B");
+            
             jwtBearerToken = issueJwtToken(user);
             role = user.role;
-            console.log("C");
 
         }
         else{
             deactivatedStatus = db.get('users').find({id: payload['sub']}).get('deactivated').value();
-            console.log("D");
             if(deactivatedStatus){
                 //Return message if deactivated
                 return res.status(403).send('Your account is marked as deactivated. Please contact site administrator.');
             }
-            console.log("E");
             jwtBearerToken = issueJwtToken(db.get('users').find({id: payload['sub']}).value());
             role = db.get('users').find({id: payload['sub']}).value().role;
-            console.log("F");
         }
-        console.log("G");
         // send token and role back
         res.status(200).send({token: jwtBearerToken, role: role}); 
     }).catch(err => {
@@ -815,7 +807,6 @@ app.route('/api/open/policies/:policyName')
 
 //Updating Policies
 app.post('/api/admin/policies/:policyName', (req,res) => {
-    console.log("HEY1111");
     const policyName = req.params.policyName;
     if(policyName != "sp" && policyName != "dmca" && policyName != "aup"){
         return res.status(404).send("This is not a valid policyName");
