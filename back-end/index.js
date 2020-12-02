@@ -649,7 +649,7 @@ app.post('/api/open/users/newAccount', (req, res) => {
     }
 
     verificationLink = hashPassword(email_clean); //hashing based on user information and remove slashes to avoid url conflicts
-    verificationLink = verificationLink.replace('/', '');
+    verificationLink = verificationLink.toString().replace(/\//g, '');
 
     const newUser = {
         name: name_clean,
