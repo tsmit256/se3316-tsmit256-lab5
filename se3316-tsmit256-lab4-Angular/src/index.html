@@ -3,21 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="google-signin-client_id" content="377942630150-bnac8vub3oso7hau5b8h3ap6004mh4kq.apps.googleusercontent.com">
-  <meta name="google-signin-cookiepolicy" content="single_host_origin">
-  <script src="https://apis.google.com/js/platform.js"></script>
   <title>Western Timetable</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <div class="g-signin2" data-onsuccess="onSignIn"></div>
-  <script>
-    //Sign in using the google api
-    function onSignIn(googleUser){
-      document.getElementById("googleIdToSendToServer").className = googleUser.getAuthResponse().id_token;
-    }
-  </script>
   <app-root></app-root>
 </body>
 </html>

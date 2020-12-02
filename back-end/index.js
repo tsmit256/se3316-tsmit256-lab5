@@ -560,6 +560,52 @@ app.post('/api/open/users/authenticate', (req,res) => {
 });
 
 
+
+//User update password
+app.post('/api/open/users/password', (req, res) => {
+    const email_dirty = req.body.email;
+    const password_dirty = req.body.password;
+    const newPassword_dirty = req.body.newPassword;
+
+    const email_clean = validateAndSanitize.cleanEmail(res, email_dirty);
+    const password_clean = validateAndSanitize.cleanPassword(res, password_dirty);
+    const newPassword_clean = validateAndSanitize.cleanPassword(res, newPassword_dirty);
+
+    const user = db.get('users')
+    .find({email: email_clean});
+
+    //Get the existing password
+    const existingPassword = user
+      .get('password')
+      .value();
+
+    if(!existingPassword){
+        return res.status(404).send('A user account with that email does not exist');
+    }
+
+    if(!comparePasswords(password_clean, existingPassword)){
+        return res.status(400).send('Password and email combination not correct');
+    }
+
+    const deactivatedStatus = user.get('deactivated').value();
+
+    if(deactivatedStatus){
+        //Return message if deactivated
+        return res.status(403).send('Your account is marked as deactivated. Please contact site administrator.');
+    }
+
+    //hash the new password
+    hashedPassword = hashPassword(newPassword_clean);
+
+    //assign the user's password to be the new password
+    db.get('users').find({email: email_clean})
+    .assign({password: hashedPassword}).write();
+
+    res.send(true);
+});
+
+
+
 //User authentication using google api
 app.post('/api/open/users/googleAuthenticate', (req, res) => {
     const token = req.body.token;

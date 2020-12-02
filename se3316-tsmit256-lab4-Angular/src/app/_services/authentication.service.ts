@@ -41,6 +41,17 @@ export class AuthenticationService {
             }));
     }
 
+    updatePass(email: string, password: string, newPassword: string) {
+      if(!this.validateService.isValidEmail(email) || !this.validateService.isValidPassword(password) || !this.validateService.isValidPassword(newPassword)){
+        return;
+      }
+      return this.http.post<any>(`api/open/users/password`, { email: email, password: password, newPassword: newPassword }, this.httpOptions)
+          .pipe(map(isUpdated => {
+              //return a boolean of whether the password has been updated
+              return isUpdated;                
+          }));
+    }
+
     logout() {
         // remove user from local storage to log user out
         localStorage.removeItem('currentUser');

@@ -3,6 +3,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { AuthenticationService } from '../_services/authentication.service';
+import { SocialAuthService } from "angularx-social-login";
+import { SocialUser } from "angularx-social-login";
+import { GoogleLoginProvider } from "angularx-social-login";
 
 @Component({
   selector: 'app-login',
@@ -11,25 +14,34 @@ import { AuthenticationService } from '../_services/authentication.service';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  updateForm: FormGroup;
   registerForm: FormGroup;
   loading = false;
   loginSubmitted = false;
   regSubmitted = false;
+  updateSubmitted = false;
   returnUrl: string;
   loginError = '';
+  updateError = '';
   registerError = '';
   verifyLink: string;
+  googleUser: SocialUser;
 
   constructor(
       private formBuilder: FormBuilder,
       private route: ActivatedRoute,
       private router: Router,
-      private authenticationService: AuthenticationService
+      private authenticationService: AuthenticationService,
+      private googleAuthService: SocialAuthService
   ) { 
       // redirect to home if already logged in
       if (this.authenticationService.currentUserValue) { 
           this.router.navigate(['/subjects']);
       }
+
+      this.googleAuthService.authState.subscribe((user) => {
+        this.googleUser = user;
+      });
   }
 
   ngOnInit() {
@@ -37,6 +49,12 @@ export class LoginComponent implements OnInit {
           email: ['', [Validators.required, Validators.email]],
           password: ['', Validators.required]
       });
+
+      this.updateForm = this.formBuilder.group({
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', Validators.required],
+        npassword: ['', Validators.required]
+    });
 
       this.registerForm = this.formBuilder.group({
           name: ['', Validators.required],
@@ -52,6 +70,7 @@ export class LoginComponent implements OnInit {
 
   // convenience getter for easy access to form fields
   get f() { return this.loginForm.controls; }
+  get uf() { return this.updateForm.controls; }
   get rf() { return this.registerForm.controls; }
 
   onLoginSubmit() {
@@ -68,6 +87,7 @@ export class LoginComponent implements OnInit {
       if(result){ //Don't continue if it doesn't return a value
         result.subscribe(
             data => {
+                this.loading = false;
                 if(data.token){
                   this.loginError = "";
                   this.router.navigate([this.returnUrl]);
@@ -87,6 +107,33 @@ export class LoginComponent implements OnInit {
       else{
         this.loading = false;
       }  
+  }
+
+
+  onUpdateSubmit() {
+    this.updateSubmitted = true;
+
+    // stop here if form is invalid
+    if (this.updateForm.invalid) {
+        return;
+    }
+
+    let result = this.authenticationService.updatePass(this.uf.email.value, this.uf.password.value, this.uf.npassword.value);
+
+    if(result){ //Don't continue if it doesn't return a value
+      result.subscribe(
+          data => {
+                alert("Your password has been changed!")
+                this.updateError = "";
+          },
+          error => {
+              this.updateError = error.error;
+              this.loading = false;
+          });
+    }
+    else{
+      this.loading = false;
+    }  
   }
 
   onRegisterSubmit() {
@@ -121,14 +168,11 @@ export class LoginComponent implements OnInit {
   }
 
   signInWithGoogle(): void {
-    var googleIdToken = document.getElementById("googleIdToSendToServer").className;
-    
-    //Don't do anything if the user hasn't yet signed in using the google api
-    if(!googleIdToken || googleIdToken == "")
-      return;
-
-    //Send the google user token to server
-    this.sendTokenToApi(googleIdToken);
+    this.googleAuthService.signIn(GoogleLoginProvider.PROVIDER_ID)
+    .then((userData) => {
+      //Send the google user token to server
+      this.sendTokenToApi(userData.idToken);
+    });
   }
 
   //send the google user token to server

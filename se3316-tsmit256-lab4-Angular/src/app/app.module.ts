@@ -22,6 +22,7 @@ import { CourseReviewComponent } from './course-review/course-review.component';
 import { ManageUsersComponent } from './manage-users/manage-users.component';
 import { ManagePoliciesComponent } from './manage-policies/manage-policies.component';
 import { PoliciesComponent } from './policies/policies.component';
+import { GoogleLoginProvider, SocialAuthServiceConfig, SocialLoginModule } from 'angularx-social-login';
 
 @NgModule({
   declarations: [
@@ -47,10 +48,24 @@ import { PoliciesComponent } from './policies/policies.component';
     HttpClientModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    SocialLoginModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    { provide: 'SocialAuthServiceConfig',
+      useValue: {
+        autoLogin: false,
+        providers: [
+          {
+            id: GoogleLoginProvider.PROVIDER_ID,
+            provider: new GoogleLoginProvider(
+              '377942630150-bnac8vub3oso7hau5b8h3ap6004mh4kq.apps.googleusercontent.com'
+            )
+          }
+        ]
+      } as SocialAuthServiceConfig
+    }
   ],
   bootstrap: [AppComponent]
 })
